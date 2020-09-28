@@ -148,7 +148,6 @@ type ErrorResponse struct {
 
 // checkResponse performs required checks whether there is any error or not
 func checkResponse(r *http.Response) error {
-
 	lg.Debug().Msgf("HTTP status code: %d", r.StatusCode)
 
 	// a successful request status code must be between 200 and 299
@@ -159,7 +158,6 @@ func checkResponse(r *http.Response) error {
 	errorResponse := &e.Error{Response: r}
 
 	data, err := ioutil.ReadAll(r.Body)
-	lg.Debug().Msgf("HTTP Response body: %s", string(data))
 
 	if err == nil && data != nil {
 		_ = json.Unmarshal(data, errorResponse)
