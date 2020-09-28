@@ -1,11 +1,11 @@
 package smsglobal
 
 import (
-	"github.com/smsglobal/smsglobal-go/pkg/api/user"
 	"github.com/smsglobal/smsglobal-go/pkg/client"
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/types/constants"
+	"github.com/smsglobal/smsglobal-go/user"
 	"net/http"
 )
 
