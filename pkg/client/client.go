@@ -25,13 +25,35 @@ var (
 
 // client defines information that can be used to make a request to SMSGlobal Rest API.
 type Client struct {
-	method  string
-	path    string
-	client  *http.Client
-	baseUrl *url.URL
-	timeout time.Duration
-	Key     string // API KEY
-	Secret  string // API SECRET
+	method     string
+	path       string
+	httpClient *http.Client
+	baseURL    *url.URL
+	timeout    time.Duration
+	Key        string // API key
+	Secret     string // API secret
+}
+
+// New returns a new api request handler
+func New(key, secret string, httpClient *http.Client) *Client {
+	baseURL, _ := url.Parse(constants.Host)
+
+	hc := httpClient
+
+	if hc == nil {
+		hc = &http.Client{
+			Timeout: constants.Timeout * time.Second,
+		}
+	}
+
+	c := &Client{
+		httpClient: hc,
+		baseURL:    baseURL,
+		Key:        key,
+		Secret:     secret,
+	}
+
+	return c
 }
 
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
@@ -39,7 +61,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	lg.Debug().Msgf("Creating new http request instance")
 
 	// TODO move to constructor
-	baseUrl, err := c.baseUrl.Parse(fmt.Sprintf("%s%s", constants.Host, path))
+	baseURL, err := c.baseURL.Parse(fmt.Sprintf("%s%s", constants.Host, path))
 
 	if err != nil {
 		return nil, err
@@ -47,8 +69,8 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 
 	// TODO move to constructor and set from their
 	// set URL struct if given path is valid
-	c.baseUrl = baseUrl
-	c.client = &http.Client{
+	c.baseURL = baseURL
+	c.httpClient = &http.Client{
 		Timeout: constants.Timeout * time.Second,
 	}
 
@@ -61,7 +83,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 		}
 	}
 
-	req, err := http.NewRequest(method, c.baseUrl.String(), buffer)
+	req, err := http.NewRequest(method, c.baseURL.String(), buffer)
 	if err != nil {
 		return nil, err
 	}
@@ -85,16 +107,8 @@ func (c *Client) generateAuthToken() string {
 	timestamp := int(time.Now().Unix())
 	nonce := rand.Intn(1000000000)
 
-	var protocol int
-
-	if c.baseUrl.Scheme == "https" {
-		protocol = 443
-	} else {
-		protocol = 80
-	}
-
 	// raw string for HMAC generation
-	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, c.baseUrl.Path, c.baseUrl.Host, protocol)
+	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, c.baseURL.Path, c.baseURL.Host, 443)
 
 	// TODO clean up before MR
 	lg.Debug().Msgf("Raw auth string: %v", auth)
@@ -114,9 +128,9 @@ func (c *Client) generateAuthToken() string {
 // Do sends an API request and returns the API response. The API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) (r.Response, error) {
 
-	lg.Debug().Msgf("Sending %s request to %s", c.method, c.baseUrl)
+	lg.Debug().Msgf("Sending %s request to %s", c.method, c.baseURL)
 
-	res, err := c.client.Do(req)
+	res, err := c.httpClient.Do(req)
 
 	if err != nil {
 		return nil, &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode, Response: res}
@@ -135,7 +149,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (r.Response, error) {
 		err = json.NewDecoder(res.Body).Decode(v)
 	}
 
-	lg.Debug().Msg("api request completed")
+	lg.Debug().Msg("HTTP request done")
 
 	return httpResponse, err
 }
