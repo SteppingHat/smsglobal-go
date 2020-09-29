@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/smsglobal/smsglobal-go/interface/apiclient"
 	r "github.com/smsglobal/smsglobal-go/interface/response"
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
@@ -15,40 +16,34 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	p "path"
 	"time"
 )
 
-// TODO move to constructor
-var (
-	lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "HTTP Client").Logger()
-)
+var lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "HTTP Client").Logger()
 
 // client defines information that can be used to make a request to SMSGlobal Rest API.
 type Client struct {
 	method     string
 	path       string
-	httpClient *http.Client
-	baseURL    *url.URL
+	HttpClient apiclient.HTTPClient
+	BaseURL    *url.URL
 	timeout    time.Duration
 	Key        string // API key
 	Secret     string // API secret
 }
 
 // New returns a new api request handler
-func New(key, secret string, httpClient *http.Client) *Client {
+func New(key, secret string) *Client {
 	baseURL, _ := url.Parse(constants.Host)
 
-	hc := httpClient
-
-	if hc == nil {
-		hc = &http.Client{
-			Timeout: constants.Timeout * time.Second,
-		}
+	hc := &http.Client{
+		Timeout: constants.Timeout * time.Second,
 	}
 
 	c := &Client{
-		httpClient: hc,
-		baseURL:    baseURL,
+		HttpClient: hc,
+		BaseURL:    baseURL,
 		Key:        key,
 		Secret:     secret,
 	}
@@ -60,30 +55,28 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 
 	lg.Debug().Msgf("Creating new http request instance")
 
-	// TODO move to constructor
-	baseURL, err := c.baseURL.Parse(fmt.Sprintf("%s%s", constants.Host, path))
+	rel, err := url.Parse(path)
 
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO move to constructor and set from their
-	// set URL struct if given path is valid
-	c.baseURL = baseURL
-	c.httpClient = &http.Client{
-		Timeout: constants.Timeout * time.Second,
-	}
+	// append path to existing path "/v2"
+	c.BaseURL.Path = p.Join(c.BaseURL.Path, rel.Path)
 
+	u := c.BaseURL.ResolveReference(c.BaseURL)
 	c.method = method
+
 	buffer := new(bytes.Buffer)
 	if body != nil {
-		err = json.NewEncoder(buffer).Encode(body)
+		err := json.NewEncoder(buffer).Encode(body)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	req, err := http.NewRequest(method, c.baseURL.String(), buffer)
+	fmt.Println(u.String())
+	req, err := http.NewRequest(method, u.String(), buffer)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +88,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("User-Agent", constants.UserAgent)
 
 	// TODO clean up before MR
-	//lg.Debug().Msgf("Authorization header: %v", req.Header.Get("Authorization"))
+	lg.Debug().Msgf("Authorization header: %v", req.Header.Get("Authorization"))
 
 	return req, nil
 }
@@ -107,8 +100,9 @@ func (c *Client) generateAuthToken() string {
 	timestamp := int(time.Now().Unix())
 	nonce := rand.Intn(1000000000)
 
+	lg.Debug().Msgf("Given PATH %+v", c.BaseURL.Path)
 	// raw string for HMAC generation
-	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, c.baseURL.Path, c.baseURL.Host, 443)
+	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, c.BaseURL.Path, c.BaseURL.Host, 443)
 
 	// TODO clean up before MR
 	lg.Debug().Msgf("Raw auth string: %v", auth)
@@ -128,9 +122,9 @@ func (c *Client) generateAuthToken() string {
 // Do sends an API request and returns the API response. The API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) (r.Response, error) {
 
-	lg.Debug().Msgf("Sending %s request to %s", c.method, c.baseURL)
+	lg.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
 
-	res, err := c.httpClient.Do(req)
+	res, err := c.HttpClient.Do(req)
 
 	if err != nil {
 		return nil, &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode, Response: res}

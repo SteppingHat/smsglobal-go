@@ -6,7 +6,6 @@ import (
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/pkg/user"
 	"github.com/smsglobal/smsglobal-go/types/constants"
-	"net/http"
 )
 
 var (
@@ -29,6 +28,6 @@ func New(key, secret string) (*SMSGlobal, error) {
 
 	s := new(SMSGlobal)
 
-	s.User = &user.Client{Handler: client.New(key, secret, http.DefaultClient)}
+	s.User = &user.Client{Handler: client.New(key, secret)}
 	return s, nil
 }
