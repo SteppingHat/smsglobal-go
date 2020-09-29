@@ -1,8 +1,8 @@
 package logger
 
 import (
-	"os"
 	"github.com/rs/zerolog"
+	"os"
 )
 
 // Logger struct to be used as the logger object
