@@ -48,3 +48,14 @@ func GetGarbageResponse(*http.Request) (*http.Response, error) {
 		Body:       r,
 	}, nil
 }
+
+func GetUnknownAuthenticationError(*http.Request) (*http.Response, error) {
+
+	json := `Unknown Authentication Error`
+	// create a new reader with that JSON
+	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
+	return &http.Response{
+		StatusCode: http.StatusForbidden,
+		Body:       r,
+	}, nil
+}

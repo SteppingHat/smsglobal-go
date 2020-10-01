@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/smsglobal/smsglobal-go/interface/apiclient"
-	r "github.com/smsglobal/smsglobal-go/interface/response"
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/types/constants"
@@ -119,24 +118,23 @@ func (c *Client) generateAuthToken() string {
 	return fmt.Sprintf(`MAC id="%s", ts="%d", nonce="%d", mac="%s"`, c.Key, timestamp, nonce, hash)
 }
 
-// Do sends an API request and returns the API response. The API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
-func (c *Client) Do(req *http.Request, v interface{}) (r.Response, error) {
+// Do sends an API request adn the API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
+func (c *Client) Do(req *http.Request, v interface{}) error {
 
 	lg.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
 
 	res, err := c.HttpClient.Do(req)
 
 	if err != nil {
-		return nil, &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode, Response: res}
+		return &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode}
 	}
 
 	defer res.Body.Close()
 
-	httpResponse := r.NewResponse(res)
 	err = checkResponse(res)
 
 	if err != nil {
-		return httpResponse, err
+		return err
 	}
 
 	if v != nil {
@@ -145,13 +143,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (r.Response, error) {
 
 	lg.Debug().Msg("HTTP request done")
 
-	return httpResponse, err
-}
-
-// ErrorResponse provides a message.
-type ErrorResponse struct {
-	Response *http.Response // HTTP response that caused this error
-	Message  string         `json:"message;omitempty"` // error message
+	return err
 }
 
 // checkResponse performs required checks whether there is any error or not
@@ -163,12 +155,16 @@ func checkResponse(r *http.Response) error {
 		return nil
 	}
 
-	errorResponse := &e.Error{Response: r}
-
+	errorResponse := &e.Error{
+		Code: r.StatusCode,
+	}
 	data, err := ioutil.ReadAll(r.Body)
 
 	if err == nil && data != nil {
-		_ = json.Unmarshal(data, errorResponse)
+		err = json.Unmarshal(data, errorResponse)
+		if err != nil {
+			errorResponse.Message = string(data)
+		}
 	}
 	return errorResponse
 }

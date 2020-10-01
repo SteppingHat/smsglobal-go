@@ -1,7 +1,6 @@
 package user
 
 import (
-	r "github.com/smsglobal/smsglobal-go/interface/response"
 	"github.com/smsglobal/smsglobal-go/pkg/client"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/types/api"
@@ -10,7 +9,7 @@ import (
 )
 
 var (
-	lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "User Client").Logger()
+	lg   = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "User Client").Logger()
 	path = "/user/credit-balance"
 )
 
@@ -19,19 +18,19 @@ type Client struct {
 }
 
 // CreditBalance method performs API request to get a user account balance
-func (c *Client) CreditBalance() (*api.BalanceResponse, r.Response, error) {
+func (c *Client) CreditBalance() (*api.BalanceResponse, error) {
 
 	req, err := c.Handler.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	balance := &api.BalanceResponse{}
-	res, err := c.Handler.Do(req, balance)
+	err = c.Handler.Do(req, balance)
 
 	if err != nil {
-		return nil, res, err
+		return nil, err
 	}
 
-	return balance, res, nil
+	return balance, nil
 }

@@ -1,8 +1,6 @@
 package client
 
 import (
-	"fmt"
-
 	"github.com/smsglobal/smsglobal-go/types/api"
 	"github.com/smsglobal/smsglobal-go/types/constants"
 	"github.com/smsglobal/smsglobal-go/util/mocks"
@@ -75,9 +73,8 @@ func TestDo(t *testing.T) {
 
 	balance := &api.BalanceResponse{}
 
-	res, err := client.Do(req, balance)
+	err = client.Do(req, balance)
 
-	assert.NotNil(t, res)
 	assert.NoError(t, err)
 	assert.EqualValues(t, 5.00, balance.Balance)
 	assert.EqualValues(t, "INR", balance.Currency)
@@ -98,13 +95,23 @@ func TestDoWithGarbageResponse(t *testing.T) {
 
 	balance := &api.BalanceResponse{}
 
-	res, err := client.Do(req, balance)
+	err = client.Do(req, balance)
 
-	//assert.IsType(t, response.HTTPResponse{}, res)
-
-	fmt.Printf("%+v", res)
 	assert.Error(t, err)
-
 	assert.Contains(t, err.Error(), "invalid character 'g' looking for beginning of object key string", "Invalid response")
+}
 
+func TestAuthenticationFailure(t *testing.T) {
+	client := New("key", "secret")
+
+	client.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetUnknownAuthenticationError,
+	}
+
+	req, err := client.NewRequest("POST", "/sms", `{"balance" : 5,"currency" : "AUD"}`)
+
+	err = client.Do(req, new(api.BalanceResponse))
+
+	assert.Error(t, err)
+	assert.Equal(t, err.Error(), `{"code":403,"message":"Unknown Authentication Error"}`, "Invalid response")
 }

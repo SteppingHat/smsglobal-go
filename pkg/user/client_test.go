@@ -18,7 +18,7 @@ func TestUserCreditBalanceFailed(t *testing.T) {
 	user := &Client{
 		Handler: client,
 	}
-	_, _, err := user.CreditBalance()
+	_, err := user.CreditBalance()
 
 	assert.Error(t, err)
 }
@@ -37,7 +37,7 @@ func TestUserCreditBalanceSuccess(t *testing.T) {
 		Handler: client,
 	}
 
-	data, _, err := user.CreditBalance()
+	data, err := user.CreditBalance()
 
 	if err != nil {
 		t.Errorf("User.Get returned error: %v", err)

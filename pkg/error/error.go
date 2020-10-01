@@ -2,7 +2,6 @@ package error
 
 import (
 	"encoding/json"
-	"net/http"
 )
 
 // Error defines an error received when making a request to the API.
@@ -10,7 +9,6 @@ type Error struct {
 	Code     int            `json:"code,omitempty"`
 	Message  string         `json:"message,omitempty"`
 	Data     []byte         `json:"data,omitempty"`
-	Response *http.Response `json:"response,omitempty"` // HTTP response that caused this error
 }
 
 // Error serializes the error object and returns JSON string

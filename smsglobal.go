@@ -23,7 +23,7 @@ func New(key, secret string) (*SMSGlobal, error) {
 	lg.Info().Msgf("Creating SMSGlobal instance")
 
 	if key == "" || secret == "" {
-		return nil, &e.Error{Message: "API key and Secret are required!"}
+		return nil, &e.Error{Message: "API key and Secret are required!", Code: constants.DefaultCode}
 	}
 
 	s := new(SMSGlobal)
