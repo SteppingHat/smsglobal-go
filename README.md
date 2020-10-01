@@ -4,6 +4,6 @@
 
 
 ### TODO list
-[ ] Reformat the code against industry coding standards
-[ ] Document all methods as per industry standards and generate doc
+[ ] Document all methods as per go coding standards and generate godoc
+
 [ ] Write how to use instructions
