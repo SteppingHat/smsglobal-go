@@ -59,3 +59,28 @@ func GetUnknownAuthenticationError(*http.Request) (*http.Response, error) {
 		Body:       r,
 	}, nil
 }
+
+// 204 response
+
+func GetNoContent(*http.Request) (*http.Response, error) {
+	// create a new reader with that JSON
+	return &http.Response{
+		StatusCode: http.StatusNoContent,
+	}, nil
+}
+
+func GetNotFound(*http.Request) (*http.Response, error) {
+
+	json := `
+{
+	"message": ""
+}
+`
+
+	// create a new reader with that JSON
+	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
+	return &http.Response{
+		StatusCode: http.StatusNotFound,
+		Body:       r,
+	}, nil
+}

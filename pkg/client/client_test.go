@@ -115,3 +115,21 @@ func TestAuthenticationFailure(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, err.Error(), `{"code":403,"message":"Unknown Authentication Error"}`, "Invalid response")
 }
+
+func TestDoNoContentResponse(t *testing.T) {
+
+	client := New("key", "secret")
+	//
+	client.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetNoContent,
+	}
+
+	req, err := client.NewRequest("DELETE", "/sms/6746514019161950", nil)
+
+	assert.NoError(t, err)
+	assert.Equal(t, client.method, http.MethodDelete)
+	assert.NotNil(t, req)
+
+	err = client.Do(req, nil)
+	//assert.NoError(t, err)
+}

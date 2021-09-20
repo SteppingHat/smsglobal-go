@@ -11,6 +11,7 @@ import (
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/types/constants"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -63,6 +64,8 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	// append path to existing path "/v2"
 	c.BaseURL.Path = p.Join(c.BaseURL.Path, rel.Path)
 
+	// forward query string
+	c.BaseURL.RawQuery = rel.RawQuery
 	u := c.BaseURL.ResolveReference(c.BaseURL)
 	c.method = method
 
@@ -99,9 +102,17 @@ func (c *Client) generateAuthToken() string {
 	timestamp := int(time.Now().Unix())
 	nonce := rand.Intn(1000000000)
 
-	lg.Debug().Msgf("Given PATH %+v", c.BaseURL.Path)
+	resource := c.BaseURL.Path
+
+	// append query params
+	if len(c.BaseURL.RawQuery) > 0 {
+		resource = resource + "?" + c.BaseURL.RawQuery
+	}
+
+	lg.Debug().Msgf("Given PATH %+v", resource)
+
 	// raw string for HMAC generation
-	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, c.BaseURL.Path, c.BaseURL.Host, 443)
+	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, resource, c.BaseURL.Host, 443)
 
 	// TODO clean up before MR
 	lg.Debug().Msgf("Raw auth string: %v", auth)
@@ -129,16 +140,28 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode}
 	}
 
-	defer res.Body.Close()
-
 	err = checkResponse(res)
 
 	if err != nil {
 		return err
 	}
 
+
+	// TODO remove below log lines
+	lg.Debug().Msgf("Response received %+v", res)
+	lg.Debug().Msgf("Response body %+v", res.Body)
+
+	fmt.Println(res.Body)
+
+	if res != nil {
+		defer res.Body.Close()
+	}
+
 	if v != nil {
 		err = json.NewDecoder(res.Body).Decode(v)
+		if err == io.EOF {
+			return nil
+		}
 	}
 
 	lg.Debug().Msg("HTTP request done")
@@ -149,6 +172,9 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 // checkResponse performs required checks whether there is any error or not
 func checkResponse(r *http.Response) error {
 	lg.Debug().Msgf("HTTP status code: %d", r.StatusCode)
+
+	//bodyBytes , err := ioutil.ReadAll(r.Body)
+	//lg.Debug().Msgf("HTTP response string %s", string(bodyBytes))
 
 	// a successful request status code must be between 200 and 299
 	if c := r.StatusCode; http.StatusOK <= c && c < http.StatusMultipleChoices {

@@ -4,6 +4,7 @@ import (
 	"github.com/smsglobal/smsglobal-go/pkg/client"
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
+	"github.com/smsglobal/smsglobal-go/pkg/sms"
 	"github.com/smsglobal/smsglobal-go/pkg/user"
 	"github.com/smsglobal/smsglobal-go/types/constants"
 )
@@ -15,6 +16,7 @@ var (
 // SMSGlobal defines the SMSGlobal client.
 type SMSGlobal struct {
 	User *user.Client
+	Sms *sms.Client
 }
 
 // Init initializes the SMSGlobal client with all available resources
@@ -29,5 +31,8 @@ func New(key, secret string) (*SMSGlobal, error) {
 	s := new(SMSGlobal)
 
 	s.User = &user.Client{Handler: client.New(key, secret)}
+
+	s.Sms = &sms.Client{Handler: client.New(key, secret)}
+
 	return s, nil
 }
