@@ -39,7 +39,7 @@ func (c *Client) Get(id string) (*api.Sms, error) {
 
 func (c *Client) List(options map[string]string) (*api.SmsList, error) {
 	// append filter options
-	if options != nil {
+	if len(options) != 0 {
 		params := url.Values{}
 		for k, v := range options {
 			params.Add(k, v)

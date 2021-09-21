@@ -22,7 +22,7 @@ import (
 
 var lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "HTTP Client").Logger()
 
-// client defines information that can be used to make a request to SMSGlobal Rest API.
+// Client client defines information that can be used to make a request to SMSGlobal Rest API.
 type Client struct {
 	method     string
 	path       string
@@ -129,7 +129,7 @@ func (c *Client) generateAuthToken() string {
 	return fmt.Sprintf(`MAC id="%s", ts="%d", nonce="%d", mac="%s"`, c.Key, timestamp, nonce, hash)
 }
 
-// Do sends an API request adn the API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
+// Do send an API request adn the API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) error {
 
 	lg.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
@@ -145,13 +145,6 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 	if err != nil {
 		return err
 	}
-
-
-	// TODO remove below log lines
-	lg.Debug().Msgf("Response received %+v", res)
-	lg.Debug().Msgf("Response body %+v", res.Body)
-
-	fmt.Println(res.Body)
 
 	if res != nil {
 		defer res.Body.Close()
@@ -172,9 +165,6 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 // checkResponse performs required checks whether there is any error or not
 func checkResponse(r *http.Response) error {
 	lg.Debug().Msgf("HTTP status code: %d", r.StatusCode)
-
-	//bodyBytes , err := ioutil.ReadAll(r.Body)
-	//lg.Debug().Msgf("HTTP response string %s", string(bodyBytes))
 
 	// a successful request status code must be between 200 and 299
 	if c := r.StatusCode; http.StatusOK <= c && c < http.StatusMultipleChoices {

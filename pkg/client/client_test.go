@@ -4,6 +4,7 @@ import (
 	"github.com/smsglobal/smsglobal-go/types/api"
 	"github.com/smsglobal/smsglobal-go/types/constants"
 	"github.com/smsglobal/smsglobal-go/util/mocks"
+	"github.com/smsglobal/smsglobal-go/util/testdata"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"regexp"
@@ -45,10 +46,10 @@ func TestNewRequest(t *testing.T) {
 		DoFunc: mocks.GetOk,
 	}
 
-	req, err := client.NewRequest("POST", "/sms", `{"balance" : 5,"currency" : "AUD"}`)
+	req, err := client.NewRequest("GET", "/sms", nil)
 
 	assert.NoError(t, err)
-	assert.Equal(t, http.MethodPost, client.method)
+	assert.Equal(t, http.MethodGet, client.method)
 	assert.Equal(t, constants.ContentType, req.Header.Get("Accept"))
 	assert.Equal(t, constants.ContentType, req.Header.Get("Content-Type"))
 	assert.Equal(t, "utf-8", req.Header.Get("Accept-Charset"))
@@ -59,25 +60,26 @@ func TestDo(t *testing.T) {
 
 	client := New("key", "secret")
 
-	mocks.ResponseJson = `{"balance" : 5,"currency" : "INR"}`
+	mocks.ResponseJson = testdata.SentToSingleDestinationResponse()
 
 	client.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
-	req, err := client.NewRequest("POST", "/sms", `{"balance" : 5,"currency" : "AUD"}`)
+	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	req, err := client.NewRequest("POST", "/sms", p)
 
 	assert.NoError(t, err)
 	assert.Equal(t, client.method, http.MethodPost)
 	assert.NotNil(t, req)
 
-	balance := &api.BalanceResponse{}
-
-	err = client.Do(req, balance)
+	sms := &api.Sms{}
+	err = client.Do(req, sms)
 
 	assert.NoError(t, err)
-	assert.EqualValues(t, 5.00, balance.Balance)
-	assert.EqualValues(t, "INR", balance.Currency)
+	assert.EqualValues(t, testdata.GetSmsResponse().Origin, sms.Origin)
+	assert.EqualValues(t, testdata.GetSmsResponse().Destination, sms.Destination)
+	assert.EqualValues(t, testdata.GetSmsResponse().Message, sms.Message)
 }
 
 func TestDoWithGarbageResponse(t *testing.T) {
@@ -87,7 +89,8 @@ func TestDoWithGarbageResponse(t *testing.T) {
 		DoFunc: mocks.GetGarbageResponse,
 	}
 
-	req, err := client.NewRequest("POST", "/sms", `{"balance" : 5,"currency" : "AUD"}`)
+	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	req, err := client.NewRequest("POST", "/sms", p)
 
 	assert.NoError(t, err)
 	assert.Equal(t, client.method, http.MethodPost)
@@ -108,7 +111,8 @@ func TestAuthenticationFailure(t *testing.T) {
 		DoFunc: mocks.GetUnknownAuthenticationError,
 	}
 
-	req, err := client.NewRequest("POST", "/sms", `{"balance" : 5,"currency" : "AUD"}`)
+	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	req, err := client.NewRequest("POST", "/sms", p)
 
 	err = client.Do(req, new(api.BalanceResponse))
 
@@ -119,7 +123,7 @@ func TestAuthenticationFailure(t *testing.T) {
 func TestDoNoContentResponse(t *testing.T) {
 
 	client := New("key", "secret")
-	//
+
 	client.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetNoContent,
 	}
@@ -131,5 +135,5 @@ func TestDoNoContentResponse(t *testing.T) {
 	assert.NotNil(t, req)
 
 	err = client.Do(req, nil)
-	//assert.NoError(t, err)
+	assert.NoError(t, err)
 }

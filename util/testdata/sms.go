@@ -5,23 +5,9 @@ import (
 	"github.com/smsglobal/smsglobal-go/types/api"
 )
 
-func GetSmsResponseJson() string {
-	return `
-		{
-		  "id":6088544242604429,
-		  "outgoing_id":5252344293,
-		  "origin":"NodeSdk",
-		  "destination":"61474950859",
-		  "message":"Test sms from GO sdk",
-		  "status":"delivered",
-		  "dateTime":"2020-08-18 10:36:29 +1000"
-		}
-	`
-}
-
-// SmsResponse return Sms type
+// GetSmsResponse return Sms type
 func GetSmsResponse() *api.Sms {
-	d := GetSmsResponseJson()
+	d := SentToSingleDestinationResponse()
 	res := new(api.Sms)
 	_ = json.Unmarshal([]byte(d), res)
 
@@ -58,7 +44,7 @@ func SmsListResponseJson() string {
 	`
 }
 
-// SmsResponse return Sms type
+// SmsListResponse SmsResponse return Sms type
 func SmsListResponse() *api.SmsList {
 	d := SmsListResponseJson()
 	res := new(api.SmsList)
@@ -106,7 +92,7 @@ func SentToMultipleDestinationsResponse() string {
 	`
 }
 
-// when an incomplete sms sent
+// IncompleteMessageResponse when an incomplete sms sent
 func IncompleteMessageResponse() string {
 	return `{"status":"OK","data":{"messages":[]}}`
 }

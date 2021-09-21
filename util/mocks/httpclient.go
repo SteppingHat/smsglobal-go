@@ -13,9 +13,6 @@ type MockClient struct {
 }
 
 var (
-	// GetDoFunc fetches the mock client's `Do` func
-	GetDoFunc func(req *http.Request) (*http.Response, error)
-
 	ResponseJson string
 )
 
@@ -60,22 +57,22 @@ func GetUnknownAuthenticationError(*http.Request) (*http.Response, error) {
 	}, nil
 }
 
-// 204 response
-
+// GetNoContent 204 response
 func GetNoContent(*http.Request) (*http.Response, error) {
-	// create a new reader with that JSON
+	var bodyBytes []byte
+
+	//  http.Response guarantees that Response.Body will not be nil even if there is no response data so do the mock response
+	r := ioutil.NopCloser(bytes.NewBuffer([]byte(bodyBytes)))
+
 	return &http.Response{
 		StatusCode: http.StatusNoContent,
+		Body: r,
 	}, nil
 }
 
 func GetNotFound(*http.Request) (*http.Response, error) {
 
-	json := `
-{
-	"message": ""
-}
-`
+	json := `{ "message": "" }`
 
 	// create a new reader with that JSON
 	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))

@@ -19,7 +19,7 @@ type SMSGlobal struct {
 	Sms *sms.Client
 }
 
-// Init initializes the SMSGlobal client with all available resources
+// New Init initializes the SMSGlobal client with all available resources
 func New(key, secret string) (*SMSGlobal, error) {
 
 	lg.Info().Msgf("Creating SMSGlobal instance")
