@@ -1,9 +1,9 @@
 package user
 
 import (
-	c "github.com/smsglobal/smsglobal-go/pkg/client"
-	"github.com/smsglobal/smsglobal-go/util/mocks"
-	"github.com/smsglobal/smsglobal-go/util/testdata"
+	c "github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
+	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

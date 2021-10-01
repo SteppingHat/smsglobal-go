@@ -1,10 +1,10 @@
 package client
 
 import (
-	"github.com/smsglobal/smsglobal-go/types/api"
-	"github.com/smsglobal/smsglobal-go/types/constants"
-	"github.com/smsglobal/smsglobal-go/util/mocks"
-	"github.com/smsglobal/smsglobal-go/util/testdata"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
+	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
+	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"regexp"

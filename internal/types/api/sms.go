@@ -1,6 +1,5 @@
 package api
 
-
 type message struct {
 	Id int64 `json:"id"`
 	OutgoingId uint64 `json:"outgoing_id; omitempty"`

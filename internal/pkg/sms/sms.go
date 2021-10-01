@@ -2,10 +2,10 @@ package sms
 
 import (
 	"fmt"
-	"github.com/smsglobal/smsglobal-go/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/smsglobal/smsglobal-go/types/api"
-	"github.com/smsglobal/smsglobal-go/types/constants"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"net/http"
 	"net/url"
 )

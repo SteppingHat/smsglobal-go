@@ -2,7 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
-	"github.com/smsglobal/smsglobal-go/types/api"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
 )
 
 var rawJson = `{"balance" : 15,"currency" : "EUR"}`

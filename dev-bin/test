@@ -4,10 +4,10 @@ go clean -testcache
 
 echo "Running all unit tests"
 
-go test -v --coverprofile=coverage.out -count=1 -p 1 -cover ./...
+go test --coverprofile=coverage.out -count=1 -p 1 -cover ./...
 if [ $? -eq 1 ]; then
     echo "Failed tests"
     exit 1
 fi
 
-"${PWD}"/bin/analyse "${PWD}"/coverage.out
+"${PWD}"/dev-bin/analyse "${PWD}"/coverage.out
