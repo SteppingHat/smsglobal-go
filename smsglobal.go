@@ -9,10 +9,6 @@ import (
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 )
 
-var (
-	lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "Client").Logger()
-)
-
 // SMSGlobal defines the SMSGlobal client.
 type SMSGlobal struct {
 	User *user.Client
@@ -22,6 +18,9 @@ type SMSGlobal struct {
 // New Init initializes the SMSGlobal client with all available resources
 func New(key, secret string) (*SMSGlobal, error) {
 
+	// Create the logger
+	l := logger.CreateLogger(constants.DebugLevel)
+	lg := l.Lgr.With().Str("SMSGlobal", "New").Logger()
 	lg.Info().Msgf("Creating SMSGlobal instance")
 
 	if key == "" || secret == "" {
@@ -30,9 +29,11 @@ func New(key, secret string) (*SMSGlobal, error) {
 
 	s := new(SMSGlobal)
 
-	s.User = &user.Client{Handler: client.New(key, secret)}
+	c :=  client.New(key, secret)
+	c.Logger = l
+	s.User = &user.Client{Handler:c, Logger: l}
 
-	s.Sms = &sms.Client{Handler: client.New(key, secret)}
+	s.Sms = &sms.Client{Handler:c, Logger: l}
 
 	return s, nil
 }

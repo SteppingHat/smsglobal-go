@@ -1,23 +1,35 @@
 package sms
 
 import (
-	c "github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
+var l *logger.Logger
+
+func setup()  *client.Client{
+	// Create the logger
+	l = logger.CreateLogger(constants.DebugLevel)
+	c := client.New("key", "secret")
+	c.Logger = l
+	l.Debug("Setup completed")
+
+	return c
+}
+
 func TestSmsGetFailed(t *testing.T) {
-
-	client := c.New("key", "secret")
-
-	client.HttpClient = &mocks.MockClient{
+	c := setup()
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetGarbageResponse,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
 	}
 	_, err := sms.Get("6746514019161950")
 
@@ -25,15 +37,15 @@ func TestSmsGetFailed(t *testing.T) {
 }
 
 func TestSmsGetSuccess(t *testing.T) {
-	client := c.New("key", "secret")
-
+	c := setup()
 	mocks.ResponseJson = testdata.SentToSingleDestinationResponse()
-	client.HttpClient = &mocks.MockClient{
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 
 	res, err := sms.Get("6746514019161950")
@@ -53,15 +65,15 @@ func TestSmsGetSuccess(t *testing.T) {
 }
 
 func TestSmsListFailed(t *testing.T) {
-
-	client := c.New("key", "secret")
-
-	client.HttpClient = &mocks.MockClient{
+	c := setup()
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetGarbageResponse,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
+
 	}
 	_, err := sms.List(map[string]string{})
 
@@ -69,15 +81,15 @@ func TestSmsListFailed(t *testing.T) {
 }
 
 func TestSmsListSuccess(t *testing.T) {
-	client := c.New("key", "secret")
-
+	c := setup()
 	mocks.ResponseJson = testdata.SmsListResponseJson()
-	client.HttpClient = &mocks.MockClient{
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 
 	options := make(map[string]string)
@@ -99,30 +111,28 @@ func TestSmsListSuccess(t *testing.T) {
 }
 
 func TestSmsDeleteFailed(t *testing.T) {
-
-	client := c.New("key", "secret")
-	client.HttpClient = &mocks.MockClient{
+	c := setup()
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetNotFound,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 	err := sms.Delete("6746514019161950")
 	assert.Error(t, err)
 }
 
 func TestSmsDeleteSuccess(t *testing.T) {
-
-	client := c.New("key", "secret")
-
-
-	client.HttpClient = &mocks.MockClient{
+	c := setup()
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetNoContent,
 	}
 
 	sms := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 
 	err := sms.Delete("6746514019161950")

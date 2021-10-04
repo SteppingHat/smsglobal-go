@@ -1,23 +1,43 @@
 package user
 
 import (
-	c "github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
+var l *logger.Logger
+
+func setup()  *client.Client{
+
+	// Create the logger
+	l = logger.CreateLogger(constants.DebugLevel)
+
+	c := client.New("key", "secret")
+
+	c.Logger = l
+
+	l.Debug("Setup completed")
+
+	return c
+}
+
+
 func TestUserCreditBalanceFailed(t *testing.T) {
 
-	client := c.New("key", "secret")
+	c := setup()
 
-	client.HttpClient = &mocks.MockClient{
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetGarbageResponse,
 	}
 
 	user := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 	_, err := user.CreditBalance()
 
@@ -26,16 +46,17 @@ func TestUserCreditBalanceFailed(t *testing.T) {
 
 func TestUserCreditBalanceSuccess(t *testing.T) {
 
-	client := c.New("key", "secret")
+	c := setup()
 
 	mocks.ResponseJson = testdata.CreditBalanceJson()
 
-	client.HttpClient = &mocks.MockClient{
+	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
 	user := &Client{
-		Handler: client,
+		Handler: c,
+		Logger: l,
 	}
 
 	res, err := user.CreditBalance()

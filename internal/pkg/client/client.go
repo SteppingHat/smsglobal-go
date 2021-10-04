@@ -20,9 +20,7 @@ import (
 	"time"
 )
 
-var lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "HTTP Client").Logger()
-
-// Client client defines information that can be used to make a request to SMSGlobal Rest API.
+// Client defines information that can be used to make a request to SMSGlobal Rest API.
 type Client struct {
 	method     string
 	path       string
@@ -31,6 +29,7 @@ type Client struct {
 	timeout    time.Duration
 	Key        string // API key
 	Secret     string // API secret
+	Logger     *logger.Logger
 }
 
 // New returns a new api request handler
@@ -53,7 +52,8 @@ func New(key, secret string) *Client {
 
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
 
-	lg.Debug().Msgf("Creating new http request instance")
+	log := c.Logger.Lgr.With().Str("REST CLIENT", "NewRequest").Logger()
+	log.Info().Msg("Creating new http request instance")
 
 	rel, err := url.Parse(path)
 
@@ -90,7 +90,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("User-Agent", constants.UserAgent)
 
 	// TODO clean up before MR
-	lg.Debug().Msgf("Authorization header: %v", req.Header.Get("Authorization"))
+	log.Debug().Msgf("Authorization header: %v", req.Header.Get("Authorization"))
 
 	return req, nil
 }
@@ -98,6 +98,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 // generateAuthToken Generate authorization token string for each request
 func (c *Client) generateAuthToken() string {
 
+	log := c.Logger.Lgr.With().Str("REST CLIENT", "generateAuthToken").Logger()
 	rand.Seed(time.Now().UnixNano())
 	timestamp := int(time.Now().Unix())
 	nonce := rand.Intn(1000000000)
@@ -109,13 +110,13 @@ func (c *Client) generateAuthToken() string {
 		resource = resource + "?" + c.BaseURL.RawQuery
 	}
 
-	lg.Debug().Msgf("Given PATH %+v", resource)
+	log.Debug().Msgf("API endpoint %+v", resource)
 
 	// raw string for HMAC generation
 	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, resource, c.BaseURL.Host, 443)
 
 	// TODO clean up before MR
-	lg.Debug().Msgf("Raw auth string: %v", auth)
+	log.Debug().Msgf("Raw auth string: %v", auth)
 
 	// generate new HMAC hash
 	h := hmac.New(sha256.New, []byte(c.Secret))
@@ -132,7 +133,8 @@ func (c *Client) generateAuthToken() string {
 // Do send an API request adn the API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) error {
 
-	lg.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
+	log := c.Logger.Lgr.With().Str("REST CLIENT", "Do").Logger()
+	log.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
 
 	res, err := c.HttpClient.Do(req)
 
@@ -140,7 +142,7 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		return &e.Error{Message: "Failed to make a request", Code: constants.DefaultCode}
 	}
 
-	err = checkResponse(res)
+	err = checkResponse(c.Logger, res)
 
 	if err != nil {
 		return err
@@ -157,14 +159,17 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 		}
 	}
 
-	lg.Debug().Msg("HTTP request done")
+	log.Debug().Msg("HTTP request done")
 
 	return err
 }
 
 // checkResponse performs required checks whether there is any error or not
-func checkResponse(r *http.Response) error {
-	lg.Debug().Msgf("HTTP status code: %d", r.StatusCode)
+func checkResponse(l *logger.Logger, r *http.Response) error {
+
+	log := l.Lgr.With().Str("REST CLIENT", "checkResponse").Logger()
+
+	log.Debug().Msgf("HTTP status code: %d", r.StatusCode)
 
 	// a successful request status code must be between 200 and 299
 	if c := r.StatusCode; http.StatusOK <= c && c < http.StatusMultipleChoices {

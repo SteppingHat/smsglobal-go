@@ -5,17 +5,16 @@ import (
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
-	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"net/http"
 	"net/url"
 )
 
 type Client struct {
 	Handler *client.Client
+	Logger  *logger.Logger
 }
 
 var (
-	lg   = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "SMS Client").Logger()
 	path = "/sms"
 )
 
@@ -38,6 +37,9 @@ func (c *Client) Get(id string) (*api.Sms, error) {
 }
 
 func (c *Client) List(options map[string]string) (*api.SmsList, error) {
+
+	log := c.Logger.Lgr.With().Str("SMS API Layer", "List").Logger()
+
 	// append filter options
 	if len(options) != 0 {
 		params := url.Values{}
@@ -47,7 +49,7 @@ func (c *Client) List(options map[string]string) (*api.SmsList, error) {
 		path = path + "?" + params.Encode()
 	}
 
-	lg.Debug().Msgf("Path string %v", path)
+	log.Debug().Msgf("Path string %v", path)
 
 	req, err := c.Handler.NewRequest(http.MethodGet, path, nil)
 	if err != nil {

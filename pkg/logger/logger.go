@@ -10,7 +10,7 @@ type Logger struct {
 	Lgr zerolog.Logger
 }
 
-/*CreateLogger - create a zerolog logger*/
+// CreateLogger - create a zerolog logger
 func CreateLogger(debugLevel string) *Logger {
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
