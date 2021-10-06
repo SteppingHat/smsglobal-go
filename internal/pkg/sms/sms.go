@@ -2,11 +2,12 @@ package sms
 
 import (
 	"fmt"
-	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
-	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/smsglobal/smsglobal-go/internal/types/api"
 	"net/http"
 	"net/url"
+
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
 type Client struct {

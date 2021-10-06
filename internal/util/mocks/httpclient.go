@@ -62,7 +62,7 @@ func GetNoContent(*http.Request) (*http.Response, error) {
 	var bodyBytes []byte
 
 	//  http.Response guarantees that Response.Body will not be nil even if there is no response data so do the mock response
-	r := ioutil.NopCloser(bytes.NewBuffer([]byte(bodyBytes)))
+	r := ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	return &http.Response{
 		StatusCode: http.StatusNoContent,

@@ -1,13 +1,15 @@
 package sms
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
-	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
-	"github.com/stretchr/testify/assert"
-	"testing"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
 var l *logger.Logger

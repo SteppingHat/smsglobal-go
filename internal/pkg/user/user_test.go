@@ -1,13 +1,16 @@
 package user
 
 import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
-	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/stretchr/testify/assert"
-	"testing"
+
 )
 
 var l *logger.Logger

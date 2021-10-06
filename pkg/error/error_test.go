@@ -1,9 +1,10 @@
 package error
 
 import (
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestError(t *testing.T) {

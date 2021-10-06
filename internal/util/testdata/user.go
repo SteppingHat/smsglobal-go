@@ -5,8 +5,6 @@ import (
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
 )
 
-var rawJson = `{"balance" : 15,"currency" : "EUR"}`
-
 func CreditBalanceJson() string {
 	return `{"balance" : 15,"currency" : "EUR"}`
 }

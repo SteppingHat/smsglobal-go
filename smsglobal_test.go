@@ -1,8 +1,9 @@
 package smsglobal
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -10,6 +11,6 @@ func TestNew(t *testing.T) {
 	assert.Error(t, err)
 
 	s, _ := New("key", "secret")
-	assert.Equal(t, "key", s.User.Handler.Key,)
+	assert.Equal(t, "key", s.User.Handler.Key)
 	assert.Equal(t, "secret", s.User.Handler.Secret)
 }

@@ -31,7 +31,7 @@ func (l *Logger) Info(msg string) {
 	l.Lgr.Info().Msg(msg)
 }
 
-// Warn - print out an warning-level message
+// Warn - print out a warning-level message
 func (l *Logger) Warn(msg string) {
 	l.Lgr.Warn().Msg(msg)
 }

@@ -1,16 +1,18 @@
 package client
 
 import (
-	"github.com/smsglobal/smsglobal-go/internal/types/api"
-	"github.com/smsglobal/smsglobal-go/internal/types/constants"
-	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
-	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
-	"github.com/stretchr/testify/assert"
-	"github.com/smsglobal/smsglobal-go/pkg/logger"
 	"net/http"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
+	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
+	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
 var l *logger.Logger

@@ -1,10 +1,11 @@
 package user
 
 import (
-	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
-	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/smsglobal/smsglobal-go/internal/types/api"
 	"net/http"
+
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
 var (

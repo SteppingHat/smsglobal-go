@@ -7,10 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/smsglobal/smsglobal-go/internal/interface/apiclient"
-	e "github.com/smsglobal/smsglobal-go/pkg/error"
-	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"io"
 	"io/ioutil"
 	"math/rand"
@@ -18,6 +14,11 @@ import (
 	"net/url"
 	p "path"
 	"time"
+
+	"github.com/smsglobal/smsglobal-go/internal/interface/apiclient"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
+	e "github.com/smsglobal/smsglobal-go/pkg/error"
+	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
 // Client defines information that can be used to make a request to SMSGlobal Rest API.
@@ -149,6 +150,7 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 	}
 
 	if res != nil {
+		// TODO wrap in error handling closure
 		defer res.Body.Close()
 	}
 

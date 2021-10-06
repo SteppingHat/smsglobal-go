@@ -14,7 +14,7 @@ type HTTPResponse struct {
 	*http.Response
 }
 
-// newResponse create a new Response for the provided http.Response.
+// NewResponse create a new Response for the provided http.Response.
 func NewResponse(r *http.Response) *HTTPResponse {
 	return &HTTPResponse{Response: r}
 }

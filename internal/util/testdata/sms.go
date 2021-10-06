@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
+
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
 )
 
@@ -67,6 +68,7 @@ func SentToSingleDestinationResponse() string {
 	`
 }
 
+// SentToMultipleDestinationsResponse TODO refactor write a test case for follow response handling
 func SentToMultipleDestinationsResponse() string {
 	return `
 		{
@@ -92,7 +94,7 @@ func SentToMultipleDestinationsResponse() string {
 	`
 }
 
-// IncompleteMessageResponse when an incomplete sms sent
+// IncompleteMessageResponse when an incomplete sms sent TODO refactor write a test case for follow response handling
 func IncompleteMessageResponse() string {
 	return `{"status":"OK","data":{"messages":[]}}`
 }
