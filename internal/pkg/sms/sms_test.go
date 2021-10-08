@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
@@ -14,7 +15,7 @@ import (
 
 var l *logger.Logger
 
-func setup()  *client.Client{
+func setup() *client.Client {
 	// Create the logger
 	l = logger.CreateLogger(constants.DebugLevel)
 	c := client.New("key", "secret")
@@ -40,14 +41,14 @@ func TestSmsGetFailed(t *testing.T) {
 
 func TestSmsGetSuccess(t *testing.T) {
 	c := setup()
-	mocks.ResponseJson = testdata.SentToSingleDestinationResponse()
+	mocks.ResponseJson = testdata.GetSmsResponseJson()
 	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
 	sms := &Client{
 		Handler: c,
-		Logger: l,
+		Logger:  l,
 	}
 
 	res, err := sms.Get("6746514019161950")
@@ -74,8 +75,7 @@ func TestSmsListFailed(t *testing.T) {
 
 	sms := &Client{
 		Handler: c,
-		Logger: l,
-
+		Logger:  l,
 	}
 	_, err := sms.List(map[string]string{})
 
@@ -91,7 +91,7 @@ func TestSmsListSuccess(t *testing.T) {
 
 	sms := &Client{
 		Handler: c,
-		Logger: l,
+		Logger:  l,
 	}
 
 	options := make(map[string]string)
@@ -120,7 +120,7 @@ func TestSmsDeleteFailed(t *testing.T) {
 
 	sms := &Client{
 		Handler: c,
-		Logger: l,
+		Logger:  l,
 	}
 	err := sms.Delete("6746514019161950")
 	assert.Error(t, err)
@@ -134,7 +134,7 @@ func TestSmsDeleteSuccess(t *testing.T) {
 
 	sms := &Client{
 		Handler: c,
-		Logger: l,
+		Logger:  l,
 	}
 
 	err := sms.Delete("6746514019161950")
@@ -146,6 +146,86 @@ func TestSmsDeleteSuccess(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestSend(t *testing.T) {
+func TestSmsSendOneFailed(t *testing.T) {
+	c := setup()
 
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetBadRequestResponse,
+	}
+
+	sms := &Client{
+		Handler: c,
+		Logger:  l,
+	}
+
+	d := &api.SendSingleSms{}
+	_, err := sms.SendOne(d)
+
+	assert.Error(t, err)
+}
+
+func TestSmsSendOneSuccess(t *testing.T) {
+	c := setup()
+
+	mocks.ResponseJson = testdata.SendSmsResponseJson()
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetOk,
+	}
+
+	sms := &Client{
+		Handler: c,
+		Logger:  l,
+	}
+
+	d := &api.SendSingleSms{}
+	d.SetOrigin("SMSGlobal")
+	d.SetDestination("61474000000")
+	d.SetMessage("Message context")
+
+	res, err := sms.SendOne(d)
+
+	assert.Nil(t, err)
+	assert.Equal(t, testdata.SendSmsResponse().Messages[0].Id, res.Messages[0].Id)
+}
+
+func TestSmsSendMultipleFailed(t *testing.T) {
+	c := setup()
+
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetBadRequestResponse,
+	}
+
+	sms := &Client{
+		Handler: c,
+		Logger:  l,
+	}
+
+	d := &api.SendMultipleSms{}
+	_, err := sms.SendMultiple(d)
+	assert.Error(t, err)
+}
+
+func TestSmsSendMultipleSuccess(t *testing.T) {
+	c := setup()
+
+	mocks.ResponseJson = testdata.SendSmsResponseJson()
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetOk,
+	}
+
+	sms := &Client{
+		Handler: c,
+		Logger:  l,
+	}
+
+	d := &api.SendMultipleSms{}
+	d.AddMessage(&api.SendSingleSms{
+		Origin:      "SMSGlobal",
+		Destination: "61474000000",
+		Message:     "Message context",
+	})
+	res, err := sms.SendMultiple(d)
+
+	assert.Nil(t, err)
+	assert.Equal(t, testdata.SendSmsResponse().Messages[0].Id, res.Messages[0].Id)
 }

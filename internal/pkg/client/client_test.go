@@ -17,7 +17,7 @@ import (
 
 var l *logger.Logger
 
-func setup() *Client{
+func setup() *Client {
 
 	// Create the logger
 	l = logger.CreateLogger(constants.DebugLevel)
@@ -75,26 +75,26 @@ func TestDo(t *testing.T) {
 
 	c := setup()
 
-	mocks.ResponseJson = testdata.SentToSingleDestinationResponse()
+	mocks.ResponseJson = testdata.SendSmsResponseJson()
 
 	c.HttpClient = &mocks.MockClient{
 		DoFunc: mocks.GetOk,
 	}
 
-	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"Test sms from GO SDK"}`
 	req, err := c.NewRequest(http.MethodPost, "/sms", p)
 
 	assert.NoError(t, err)
 	assert.Equal(t, c.method, http.MethodPost)
 	assert.NotNil(t, req)
 
-	sms := &api.Sms{}
+	sms := &api.SmsResponse{}
 	err = c.Do(req, sms)
 
 	assert.NoError(t, err)
-	assert.EqualValues(t, testdata.GetSmsResponse().Origin, sms.Origin)
-	assert.EqualValues(t, testdata.GetSmsResponse().Destination, sms.Destination)
-	assert.EqualValues(t, testdata.GetSmsResponse().Message, sms.Message)
+	assert.EqualValues(t, testdata.SendSmsResponse().Messages[0].Origin, sms.Messages[0].Origin)
+	assert.EqualValues(t, testdata.SendSmsResponse().Messages[0].Destination, sms.Messages[0].Destination)
+	assert.EqualValues(t, testdata.SendSmsResponse().Messages[0].Message, sms.Messages[0].Message)
 }
 
 func TestDoWithGarbageResponse(t *testing.T) {
@@ -104,7 +104,7 @@ func TestDoWithGarbageResponse(t *testing.T) {
 		DoFunc: mocks.GetGarbageResponse,
 	}
 
-	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"Test sms from GO SDK"}`
 	req, err := c.NewRequest(http.MethodPost, "/sms", p)
 
 	assert.NoError(t, err)
@@ -126,7 +126,7 @@ func TestAuthenticationFailure(t *testing.T) {
 		DoFunc: mocks.GetUnknownAuthenticationError,
 	}
 
-	p := `{ "origin":"NodeSdk", "destination":"61474950800", "message":"Test sms from GO sdk"}`
+	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"Test sms from GO SDK"}`
 	req, err := c.NewRequest(http.MethodPost, "/sms", p)
 
 	err = c.Do(req, new(api.BalanceResponse))

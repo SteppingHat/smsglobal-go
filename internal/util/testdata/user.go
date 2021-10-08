@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"encoding/json"
+
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
 )
 
@@ -10,7 +11,7 @@ func CreditBalanceJson() string {
 }
 
 func BalanceResponse() *api.BalanceResponse {
-	var requestJson string = CreditBalanceJson()
+	requestJson := CreditBalanceJson()
 	res := new(api.BalanceResponse)
 
 	_ = json.Unmarshal([]byte(requestJson), res)

@@ -25,3 +25,4 @@ func RestAPIError(code int, message string, data []byte) *Error {
 		Data:    data,
 	}
 }
+

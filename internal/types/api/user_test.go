@@ -7,7 +7,7 @@ import (
 )
 
 func TestBalance (t *testing.T) {
-	res := BalanceResponse {
+	res := &BalanceResponse {
 		Balance: 40.414,
 		Currency: "USD",
 	}

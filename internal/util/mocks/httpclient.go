@@ -66,7 +66,7 @@ func GetNoContent(*http.Request) (*http.Response, error) {
 
 	return &http.Response{
 		StatusCode: http.StatusNoContent,
-		Body: r,
+		Body:       r,
 	}, nil
 }
 
@@ -78,6 +78,20 @@ func GetNotFound(*http.Request) (*http.Response, error) {
 	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
 	return &http.Response{
 		StatusCode: http.StatusNotFound,
+		Body:       r,
+	}, nil
+}
+
+func GetBadRequestResponse(*http.Request) (*http.Response, error) {
+	json := `
+{
+	"message": ""
+}
+`
+	// create a new reader with that JSON
+	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
+	return &http.Response{
+		StatusCode: http.StatusBadRequest,
 		Body:       r,
 	}, nil
 }

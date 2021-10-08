@@ -8,9 +8,7 @@ import (
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
-var (
-	path = "/user/credit-balance"
-)
+var path = "/user/credit-balance"
 
 type Client struct {
 	Handler *client.Client
