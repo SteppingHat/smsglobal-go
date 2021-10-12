@@ -2,6 +2,7 @@ package sms
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -180,7 +181,11 @@ func TestSmsSendOneSuccess(t *testing.T) {
 	d := &api.SendSingleSms{}
 	d.SetOrigin("SMSGlobal")
 	d.SetDestination("61474000000")
-	d.SetMessage("Message context")
+	d.SetMessage("Message content")
+	s := time.Now().Add(time.Hour * 2)
+	d.SetScheduledDateTime(s)
+	d.SetNotifyUrl("https://notification.callback.com")
+	d.SetIncomingUrl("https://incoming.message.com")
 
 	res, err := sms.SendOne(d)
 
@@ -220,9 +225,10 @@ func TestSmsSendMultipleSuccess(t *testing.T) {
 
 	d := &api.SendMultipleSms{}
 	d.AddMessage(&api.SendSingleSms{
-		Origin:      "SMSGlobal",
-		Destination: "61474000000",
-		Message:     "Message context",
+		Origin:         "SMSGlobal",
+		Destination:    "61474000000",
+		Message:        "Message content",
+		ExpiryDateTime: time.Now().Add(time.Hour * 2).Format("2006-01-01 15:04:05"),
 	})
 	res, err := sms.SendMultiple(d)
 
