@@ -54,7 +54,7 @@ func New(key, secret string) *Client {
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
 
 	log := c.Logger.Lgr.With().Str("REST CLIENT", "NewRequest").Logger()
-	log.Info().Msg("Creating new http request instance")
+	log.Debug().Msg("Creating new http request instance")
 
 	rel, err := url.Parse(path)
 
@@ -70,6 +70,10 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	u := c.BaseURL.ResolveReference(c.BaseURL)
 	c.method = method
 
+	// TODO remove request body logging before releasing
+	jsonBody, _ := json.Marshal(body)
+	log.Debug().Msgf("Request body %s", jsonBody)
+
 	buffer := new(bytes.Buffer)
 	if body != nil {
 		err := json.NewEncoder(buffer).Encode(body)
@@ -78,6 +82,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 		}
 	}
 
+	// TODO remove before release
 	fmt.Println(u.String())
 	req, err := http.NewRequest(method, u.String(), buffer)
 	if err != nil {

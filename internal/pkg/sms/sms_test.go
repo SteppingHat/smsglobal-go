@@ -228,7 +228,7 @@ func TestSmsSendMultipleSuccess(t *testing.T) {
 		Origin:         "SMSGlobal",
 		Destination:    "61474000000",
 		Message:        "Message content",
-		ExpiryDateTime: time.Now().Add(time.Hour * 2).Format("2006-01-01 15:04:05"),
+		ExpiryDateTime: time.Now().Add(time.Hour * 2).Format(constants.DateTimeFormat),
 	})
 	res, err := sms.SendMultiple(d)
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 )
 
 func TestSendSingleSms_SetOrigin(t *testing.T) {
@@ -40,7 +41,7 @@ func TestSendSingleSms_SetScheduledDateTime(t *testing.T) {
 	now := time.Now()
 	s.SetScheduledDateTime(now)
 	assert.NotEmpty(t, s.ScheduledDateTime)
-	assert.Equal(t, s.ScheduledDateTime, now.Format("2006-01-01 15:04:05"))
+	assert.Equal(t, s.ScheduledDateTime, now.Format(constants.DateTimeFormat))
 }
 
 func TestSendSingleSms_SetCampaign(t *testing.T) {
@@ -80,7 +81,7 @@ func TestSendSingleSms_SetExpiryDateTime(t *testing.T) {
 	now := time.Now()
 	s.SetExpiryDateTime(now)
 	assert.NotEmpty(t, s.ExpiryDateTime)
-	assert.Equal(t, s.ExpiryDateTime, now.Format("2006-01-01 15:04:05"))
+	assert.Equal(t, s.ExpiryDateTime, now.Format(constants.DateTimeFormat))
 }
 
 func TestSendMultipleSms_AddMessage(t *testing.T) {
@@ -100,7 +101,7 @@ func TestSendMultipleSms_AddMessage(t *testing.T) {
 			Origin:         "SMSGlobal",
 			Destination:    "61474000000",
 			Message:        "Message content",
-			ExpiryDateTime: e.Format("2006-01-01 15:04:05"),
+			ExpiryDateTime: e.Format(constants.DateTimeFormat),
 		},
 	})
 }

@@ -2,6 +2,8 @@ package api
 
 import (
 	"time"
+
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 )
 
 // Message represents an outgoing sms response
@@ -67,7 +69,7 @@ func (m *SendMultipleSms) AddMessage(s *SendSingleSms) {
 }
 
 func (s *SendSingleSms) SetScheduledDateTime(t time.Time) {
-	s.ScheduledDateTime = t.Format("2006-01-01 15:04:05")
+	s.ScheduledDateTime = t.Format(constants.DateTimeFormat)
 }
 
 func (s *SendSingleSms) SetCampaign(d string) {
@@ -87,5 +89,5 @@ func (s *SendSingleSms) SetIncomingUrl(d string) {
 }
 
 func (s *SendSingleSms) SetExpiryDateTime(t time.Time) {
-	s.ExpiryDateTime = t.Format("2006-01-01 15:04:05")
+	s.ExpiryDateTime = t.Format(constants.DateTimeFormat)
 }

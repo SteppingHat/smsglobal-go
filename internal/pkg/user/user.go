@@ -20,7 +20,7 @@ func (c *Client) CreditBalance() (*api.BalanceResponse, error) {
 
 	log := c.Logger.Lgr.With().Str("USER API Layer", "CreditBalance").Logger()
 
-	log.Info().Msg("Initiating account balance request")
+	log.Debug().Msg("Initiating account balance request")
 
 	req, err := c.Handler.NewRequest(http.MethodGet, path, nil)
 	if err != nil {

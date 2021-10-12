@@ -22,7 +22,7 @@ func New(key, secret string) (*SMSGlobal, error) {
 	// Create the logger
 	l := logger.CreateLogger(constants.DebugLevel)
 	lg := l.Lgr.With().Str("SMSGlobal", "New").Logger()
-	lg.Info().Msgf("Creating SMSGlobal instance")
+	lg.Debug().Msgf("Creating SMSGlobal instance")
 
 	if key == "" || secret == "" {
 		return nil, &e.Error{Message: "API key and Secret are required!", Code: constants.DefaultCode}
