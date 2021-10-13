@@ -1,4 +1,4 @@
-package sms
+package sms_incoming
 
 import (
 	"fmt"
@@ -15,49 +15,16 @@ type Client struct {
 	Logger  *logger.Logger
 }
 
-var path = "/sms"
+var path = "/sms-incoming"
 
-func (c *Client) SendOne(params *api.SendSingleSms) (*api.SmsResponse, error) {
-	log := c.Logger.Lgr.With().Str("SMS API Layer", "SendOne").Logger()
-
-	log.Debug().Msg("Send a single message")
-
-	return c.send(params)
-}
-
-func (c *Client) SendMultiple(params *api.SendMultipleSms) (*api.SmsResponse, error) {
-	log := c.Logger.Lgr.With().Str("SMS API Layer", "SendMultiple").Logger()
-	log.Debug().Msg("Send multiple messages")
-
-	return c.send(params)
-}
-
-func (c *Client) send(body interface{}) (*api.SmsResponse, error) {
-	req, err := c.Handler.NewRequest(http.MethodPost, path, body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	sms := &api.SmsResponse{}
-
-	err = c.Handler.Do(req, sms)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return sms, nil
-}
-
-func (c *Client) Get(id string) (*api.Sms, error) {
+func (c *Client) Get(id string) (*api.SmsIncoming, error) {
 
 	req, err := c.Handler.NewRequest(http.MethodGet, fmt.Sprintf(`%s/%s`, path, id), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	sms := &api.Sms{}
+	sms := &api.SmsIncoming{}
 
 	err = c.Handler.Do(req, sms)
 
@@ -68,9 +35,9 @@ func (c *Client) Get(id string) (*api.Sms, error) {
 	return sms, nil
 }
 
-func (c *Client) List(options map[string]string) (*api.SmsList, error) {
+func (c *Client) List(options map[string]string) (*api.SmsIncomingList, error) {
 
-	log := c.Logger.Lgr.With().Str("SMS API Layer", "List").Logger()
+	log := c.Logger.Lgr.With().Str("SMS Incoming API Layer", "List").Logger()
 
 	// append filter options
 	if len(options) != 0 {
@@ -88,7 +55,7 @@ func (c *Client) List(options map[string]string) (*api.SmsList, error) {
 		return nil, err
 	}
 
-	list := &api.SmsList{}
+	list := &api.SmsIncomingList{}
 
 	err = c.Handler.Do(req, list)
 

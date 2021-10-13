@@ -3,6 +3,7 @@ package smsglobal
 import (
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/internal/pkg/sms"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/sms-incoming"
 	"github.com/smsglobal/smsglobal-go/internal/pkg/user"
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
@@ -12,8 +13,9 @@ import (
 
 // SMSGlobal defines the SMSGlobal client.
 type SMSGlobal struct {
-	User *user.Client
-	Sms  *sms.Client
+	User        *user.Client
+	Sms         *sms.Client
+	SmsIncoming *sms_incoming.Client
 }
 
 // New Init initializes the SMSGlobal client with all available resources
@@ -33,8 +35,8 @@ func New(key, secret string) (*SMSGlobal, error) {
 	c := client.New(key, secret)
 	c.Logger = l
 	s.User = &user.Client{Handler: c, Logger: l}
-
 	s.Sms = &sms.Client{Handler: c, Logger: l}
+	s.SmsIncoming = &sms_incoming.Client{Handler: c, Logger: l}
 
 	return s, nil
 }

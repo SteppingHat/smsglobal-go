@@ -59,13 +59,7 @@ func TestSmsGetSuccess(t *testing.T) {
 	}
 
 	assert.Nil(t, err)
-	assert.Equal(t, testdata.GetSmsResponse().Id, res.Id)
-	assert.Equal(t, testdata.GetSmsResponse().OutgoingId, res.OutgoingId)
-	assert.Equal(t, testdata.GetSmsResponse().Origin, res.Origin)
-	assert.Equal(t, testdata.GetSmsResponse().Destination, res.Destination)
-	assert.Equal(t, testdata.GetSmsResponse().Message, res.Message)
-	assert.Equal(t, testdata.GetSmsResponse().Status, res.Status)
-	assert.Equal(t, testdata.GetSmsResponse().DateTime, res.DateTime)
+	assert.Equal(t, testdata.GetSmsResponse(), res)
 }
 
 func TestSmsListFailed(t *testing.T) {
@@ -190,7 +184,7 @@ func TestSmsSendOneSuccess(t *testing.T) {
 	res, err := sms.SendOne(d)
 
 	assert.Nil(t, err)
-	assert.Equal(t, testdata.SendSmsResponse().Messages[0].Id, res.Messages[0].Id)
+	assert.Equal(t, testdata.SendSmsResponse().Messages, res.Messages)
 }
 
 func TestSmsSendMultipleFailed(t *testing.T) {
@@ -233,5 +227,5 @@ func TestSmsSendMultipleSuccess(t *testing.T) {
 	res, err := sms.SendMultiple(d)
 
 	assert.Nil(t, err)
-	assert.Equal(t, testdata.SendSmsResponse().Messages[0].Id, res.Messages[0].Id)
+	assert.Equal(t, testdata.SendSmsResponse().Messages, res.Messages)
 }

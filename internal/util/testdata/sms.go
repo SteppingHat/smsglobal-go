@@ -7,9 +7,9 @@ import (
 )
 
 // GetSmsResponse return Sms type
-func GetSmsResponse() *api.Message {
+func GetSmsResponse() *api.Sms {
 	d := GetSmsResponseJson()
-	res := new(api.Message)
+	res := new(api.Sms)
 	_ = json.Unmarshal([]byte(d), res)
 
 	return res
@@ -45,7 +45,7 @@ func SmsListResponseJson() string {
 	`
 }
 
-// SmsListResponse SmsResponse return Sms type
+// SmsListResponse return Sms type
 func SmsListResponse() *api.SmsList {
 	d := SmsListResponseJson()
 	res := new(api.SmsList)
@@ -85,7 +85,7 @@ func SendSmsResponseJson() string {
 	`
 }
 
-// SendSmsResponse Returns send sms response object
+// SendSmsResponse Returns SmsResponse object
 func SendSmsResponse() *api.SmsResponse {
 
 	d := SendSmsResponseJson()

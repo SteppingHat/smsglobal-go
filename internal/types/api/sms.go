@@ -6,8 +6,8 @@ import (
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 )
 
-// Message represents an outgoing sms response
-type Message struct {
+// Sms represents an outgoing sms response
+type Sms struct {
 	Id          int64  `json:"id"`
 	OutgoingId  uint64 `json:"outgoing_id,omitempty"`
 	Origin      string `json:"origin"`
@@ -19,15 +19,15 @@ type Message struct {
 
 // SmsList struct represents the list of outgoing messages
 type SmsList struct {
-	Total    uint16    `json:"total,omitempty"`
-	Offset   uint16    `json:"offset,omitempty"`
-	Limit    uint16    `json:"limit,omitempty"`
-	Messages []Message `json:"messages,omitempty"`
+	Total    uint16 `json:"total,omitempty"`
+	Offset   uint16 `json:"offset,omitempty"`
+	Limit    uint16 `json:"limit,omitempty"`
+	Messages []Sms  `json:"messages,omitempty"`
 }
 
 // SmsResponse represents an outgoing message response received after sending a message using either SendSingleSms or SendMultipleSms
 type SmsResponse struct {
-	Messages []Message `json:"messages,omitempty"`
+	Messages []Sms `json:"messages,omitempty"`
 }
 
 // SendSingleSms represents an outgoing message for sending out
