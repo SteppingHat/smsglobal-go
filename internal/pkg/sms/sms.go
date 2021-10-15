@@ -20,14 +20,14 @@ var path = "/sms"
 func (c *Client) SendOne(params *api.SendSingleSms) (*api.SmsResponse, error) {
 	log := c.Logger.Lgr.With().Str("SMS API Layer", "SendOne").Logger()
 
-	log.Debug().Msg("Send a single message")
+	log.Debug().Msg("Sending a single message")
 
 	return c.send(params)
 }
 
 func (c *Client) SendMultiple(params *api.SendMultipleSms) (*api.SmsResponse, error) {
 	log := c.Logger.Lgr.With().Str("SMS API Layer", "SendMultiple").Logger()
-	log.Debug().Msg("Send multiple messages")
+	log.Debug().Msg("Sending multiple messages")
 
 	return c.send(params)
 }

@@ -1,6 +1,7 @@
 package smsglobal
 
 import (
+	"github.com/smsglobal/smsglobal-go/internal/pkg/otp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,16 +22,23 @@ func TestNew(t *testing.T) {
 	assert.IsType(t, s.Sms, &sms.Client{})
 	assert.IsType(t, s.User, &user.Client{})
 	assert.IsType(t, s.SmsIncoming, &sms_incoming.Client{})
+	assert.IsType(t, s.Otp, &otp.Client{})
 }
 
-func TestSMSGlobal_CreateSms(t *testing.T) {
+func TestCreateSms(t *testing.T) {
 	c, _ := New("ae311d825f75e8732b4c1a5680a11aa9", "c65fa91e71af7ccf11561e95758dd158")
 	s := c.CreateSms()
 	assert.IsType(t, s, &api.SendSingleSms{})
 }
 
-func TestSMSGlobal_CreateMultipleSms(t *testing.T) {
+func TestCreateMultipleSms(t *testing.T) {
 	c, _ := New("ae311d825f75e8732b4c1a5680a11aa9", "c65fa91e71af7ccf11561e95758dd158")
 	s := c.CreateMultipleSms()
 	assert.IsType(t, s.Messages, []*api.SendSingleSms{})
+}
+
+func TestCreateOtp(t *testing.T) {
+	c, _ := New("ae311d825f75e8732b4c1a5680a11aa9", "c65fa91e71af7ccf11561e95758dd158")
+	o := c.CreateOtp()
+	assert.IsType(t, o, &api.SendOtp{})
 }

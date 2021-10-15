@@ -51,6 +51,7 @@ func New(key, secret string) *Client {
 	return c
 }
 
+// NewRequest inject authentication headers and returns http.Request
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
 
 	log := c.Logger.Lgr.With().Str("REST CLIENT", "NewRequest").Logger()
@@ -116,6 +117,7 @@ func (c *Client) generateAuthToken() string {
 		resource = resource + "?" + c.BaseURL.RawQuery
 	}
 
+	// TODO clean up before MR
 	log.Debug().Msgf("API endpoint %+v", resource)
 
 	// raw string for HMAC generation
@@ -174,6 +176,8 @@ func (c *Client) Do(req *http.Request, v interface{}) error {
 // checkResponse performs required checks whether there is any error or not
 func checkResponse(l *logger.Logger, r *http.Response) error {
 
+	var errs, u map[string]interface{}
+
 	log := l.Lgr.With().Str("REST CLIENT", "checkResponse").Logger()
 
 	log.Debug().Msgf("HTTP status code: %d", r.StatusCode)
@@ -186,13 +190,58 @@ func checkResponse(l *logger.Logger, r *http.Response) error {
 	errorResponse := &e.Error{
 		Code: r.StatusCode,
 	}
+
 	data, err := ioutil.ReadAll(r.Body)
 
-	if err == nil && data != nil {
-		err = json.Unmarshal(data, errorResponse)
-		if err != nil {
-			errorResponse.Message = string(data)
+	if err != nil {
+		log.Error().Msgf("Failed to read response: %s", err)
+		return errorResponse
+	}
+
+	if data == nil {
+		return errorResponse
+	}
+
+	err = json.Unmarshal(data, &u)
+
+	// in the case auth error;
+	if err != nil {
+		errorResponse.Errors = append(errorResponse.Errors, string(data))
+		return errorResponse
+	}
+
+	// override status code with the code returned in response body
+	if c, ok := u["code"]; ok {
+		errorResponse.Code = int(c.(float64))
+	}
+
+	// possible case is when 404 returned
+	if v, ok := u["message"]; ok {
+		errorResponse.Message = v.(string)
+
+		return errorResponse
+	}
+
+	if _, ok := u["errors"].(map[string]interface{}); ok {
+		errs = u["errors"].(map[string]interface{})
+		// populate with message index if exists
+		if v, ok := errs["message"]; ok {
+			//fmt.Println(fmt.Sprintf("Key: %s found value is: %s", ok, v))
+			errs = v.(map[string]interface{})
+		}
+
+	} else {
+		// populate with root errors object
+		errs = u
+	}
+
+	// check if errors key exists or not
+	if v, ok := errs["errors"]; ok {
+		errors := v.([]interface{})
+		for _, err := range errors {
+			errorResponse.Errors = append(errorResponse.Errors, err.(string))
 		}
 	}
+
 	return errorResponse
 }
