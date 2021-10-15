@@ -12,6 +12,7 @@ import (
 	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	"github.com/smsglobal/smsglobal-go/internal/util/mocks"
 	"github.com/smsglobal/smsglobal-go/internal/util/testdata"
+	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
 )
 
@@ -43,7 +44,6 @@ func TestNew(t *testing.T) {
 }
 
 func TestGenerateAuthToken(t *testing.T) {
-
 	c := setup()
 	token := c.generateAuthToken()
 	assert.NotNil(t, token)
@@ -132,7 +132,7 @@ func TestAuthenticationFailure(t *testing.T) {
 	err = c.Do(req, new(api.BalanceResponse))
 
 	assert.Error(t, err)
-	assert.Equal(t, err.Error(), `{"code":403,"message":"Unknown Authentication Error"}`, "Invalid response")
+	assert.Equal(t, `{"code":403,"message":"Unknown Authentication Error"}`, err.Error())
 }
 
 func TestDoNoContentResponse(t *testing.T) {
@@ -151,4 +151,46 @@ func TestDoNoContentResponse(t *testing.T) {
 
 	err = c.Do(req, nil)
 	assert.NoError(t, err)
+}
+
+func TestNotFoundResponse(t *testing.T) {
+	c := setup()
+
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetNotFound,
+	}
+
+	req, err := c.NewRequest(http.MethodGet, "/sms/53242", nil)
+
+	err = c.Do(req, nil)
+
+	assert.Error(t, err)
+
+	expected := &e.Error{
+		Code:    404,
+		Message: "Not Found",
+	}
+	assert.Equal(t, expected, err)
+}
+
+func TestBadRequestResponse(t *testing.T) {
+	c := setup()
+
+	c.HttpClient = &mocks.MockClient{
+		DoFunc: mocks.GetBadRequestResponse,
+	}
+
+	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"Account verification code."}`
+	req, err := c.NewRequest(http.MethodPost, "/otp", p)
+
+	err = c.Do(req, new(api.Otp))
+
+	assert.Error(t, err)
+
+	expected := &e.Error{
+		Code:   400,
+		Errors: []string{"Message template", "should contain a placeholder", "for code i.e. {*code*}."},
+	}
+
+	assert.Equal(t, expected, err)
 }

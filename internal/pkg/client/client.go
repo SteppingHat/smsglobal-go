@@ -206,7 +206,7 @@ func checkResponse(l *logger.Logger, r *http.Response) error {
 
 	// in the case auth error;
 	if err != nil {
-		errorResponse.Errors = append(errorResponse.Errors, string(data))
+		errorResponse.Message = string(data)
 		return errorResponse
 	}
 

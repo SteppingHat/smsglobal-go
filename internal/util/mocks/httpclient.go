@@ -72,7 +72,7 @@ func GetNoContent(*http.Request) (*http.Response, error) {
 
 func GetNotFound(*http.Request) (*http.Response, error) {
 
-	json := `{ "message": "" }`
+	json := `{ "message": "Not Found" }`
 
 	// create a new reader with that JSON
 	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
@@ -85,7 +85,11 @@ func GetNotFound(*http.Request) (*http.Response, error) {
 func GetBadRequestResponse(*http.Request) (*http.Response, error) {
 	json := `
 {
-	"message": ""
+    "errors": {
+        "message": {
+            "errors": ["Message template", "should contain a placeholder", "for code i.e. {*code*}."]
+        }
+    }
 }
 `
 	// create a new reader with that JSON
