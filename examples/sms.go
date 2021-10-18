@@ -39,8 +39,8 @@ func SendOne() {
 	res, err := client.Sms.SendOne(sms)
 
 	if err != nil {
-		fmt.Printf("Error while sending the sms: %s \n", err.Error())
-		return
+		fmt.Printf("Error while sending the message: %s \n", err.Error())
+		os.Exit(0)
 	}
 
 	fmt.Printf("Reponse received: %+v", res.Messages)
@@ -80,9 +80,8 @@ func SendMultiple() {
 	res, err := client.Sms.SendMultiple(sms)
 
 	if err != nil {
-		fmt.Printf("Error while sending the sms: %s \n", err.Error())
+		fmt.Printf("Error while sending multiple messages: %s \n", err.Error())
 		os.Exit(0)
-		return
 	}
 
 	fmt.Printf("Reponse received: %+v", res.Messages)
@@ -97,7 +96,7 @@ func List() {
 	res, err := client.Sms.List(options)
 
 	if err != nil {
-		fmt.Printf("Error while sending the sms: %s", err.Error())
+		fmt.Printf("Error while fetching the list of mesages: %s", err.Error())
 		os.Exit(0)
 	}
 
@@ -119,7 +118,7 @@ func Get() {
 	res, err := client.Sms.Get("outgoing id or id")
 
 	if err != nil {
-		fmt.Printf("Error while sending the sms: %s", err.Error())
+		fmt.Printf("Error while fetching the message details: %s", err.Error())
 		os.Exit(0)
 	}
 
@@ -134,7 +133,7 @@ func Delete() {
 	err := client.Sms.Delete("outgoing id or id")
 
 	if err != nil {
-		fmt.Printf("Error while sending the sms: %s", err.Error())
+		fmt.Printf("Error while deleting the message: %s", err.Error())
 		fmt.Println()
 		os.Exit(0)
 	}
