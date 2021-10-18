@@ -1,5 +1,3 @@
-
-
 # SMSGlobal Go SDK
 
 The official [SMSGlobal](https://www.smsglobal.com?utm_source=dev&utm_medium=github&utm_campaign=go_sdk) Go client library.
@@ -209,7 +207,7 @@ Checkout [examples](examples) folder. It contains an example of each method avai
 ### Installing GoDoc for Go v1.1.4
 Once Go v1.14 has been installed, execute the following commands to install GoDoc from smsglobal-go project's root directory
 
-```shell script
+```sh
 GOBIN=`pwd`/bin && mkdir bin && go get -u golang.org/x/tools/cmd/godoc
 ```
 
@@ -217,7 +215,9 @@ Make sure you use the godoc tool that is installed in smsglobal-go/bin directory
 
 ### Running documentation server
 
+```sh
 ./dev-bin/docs
+```
 
 Navigate here to see the documentation in your local browser: 
 http://localhost:6060/pkg/github.com/smsglobal/smsglobal-go
@@ -225,12 +225,6 @@ http://localhost:6060/pkg/github.com/smsglobal/smsglobal-go
 ### Running Tests
 To run unit tests execute the following command
 
-```shell script
+```sh
 ./dev-bin/test
 ```
-
-
-
-### TODO List
-[ ] Write how to use instructions
-[ ] Document all methods as per go coding standards and generate godoc
