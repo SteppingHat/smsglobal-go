@@ -23,6 +23,7 @@ coverage.html
 ### Go Patch ###
 /vendor/
 /Godeps/
+/bin
 
 ### macOS ###
 # General
