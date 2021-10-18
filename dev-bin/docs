@@ -1,6 +1,3 @@
 #!/bin/bash
 
-
-GOBIN=`pwd`/bin && go get -u golang.org/x/tools/cmd/godoc
-
 ./bin/godoc -http=:6060
