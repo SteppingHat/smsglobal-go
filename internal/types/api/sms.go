@@ -8,7 +8,7 @@ import (
 
 // Sms represents an outgoing sms response
 type Sms struct {
-	Id          int64  `json:"id"`
+	Id          int64  `json:"id,omitempty"`
 	OutgoingId  uint64 `json:"outgoing_id,omitempty"`
 	Origin      string `json:"origin"`
 	Destination string `json:"destination"`

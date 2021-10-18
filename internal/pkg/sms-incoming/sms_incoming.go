@@ -38,19 +38,19 @@ func (c *Client) Get(id string) (*api.SmsIncoming, error) {
 func (c *Client) List(options map[string]string) (*api.SmsIncomingList, error) {
 
 	log := c.Logger.Lgr.With().Str("SMS Incoming API Layer", "List").Logger()
-
+	p := path
 	// append filter options
 	if len(options) != 0 {
 		params := url.Values{}
 		for k, v := range options {
 			params.Add(k, v)
 		}
-		path = path + "?" + params.Encode()
+		p = path + "?" + params.Encode()
 	}
 
-	log.Debug().Msgf("Path string %v", path)
+	log.Debug().Msgf("Path string %v", p)
 
-	req, err := c.Handler.NewRequest(http.MethodGet, path, nil)
+	req, err := c.Handler.NewRequest(http.MethodGet, p, nil)
 	if err != nil {
 		return nil, err
 	}
