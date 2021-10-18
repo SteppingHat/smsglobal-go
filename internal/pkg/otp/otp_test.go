@@ -1,9 +1,9 @@
 package otp
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
 
 	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
 	"github.com/smsglobal/smsglobal-go/internal/types/api"
@@ -56,15 +56,17 @@ func TestSendOtpSuccess(t *testing.T) {
 		Logger:  l,
 	}
 
-	d := &api.SendOtp{}
+	o := &api.SendOtp{}
 
-	d.Origin = "SMSGlobal"
-	d.Destination = "61474000000"
-	d.Message = "{*code*} is your SMSGlobal verification code."
-	d.CodeExpiry = 600
-	d.Length = 4
-	d.MessageExpiryDateTime = "2021-10-12 23:23:59"
-	res, err := otp.Send(d)
+	o.SetOrigin("SMSGlobal")
+	o.SetDestination("61474000000")
+	o.SetMessage("{*code*} is your SMSGlobal verification code.")
+	o.SetCodeExpiry(600)
+	o.SetLength(4)
+
+	e := time.Now().Add(time.Minute * 30)
+	o.SetMessageExpiryDateTime(e)
+	res, err := otp.Send(o)
 
 	assert.Nil(t, err)
 	assert.ObjectsAreEqual(testdata.SendOtpResponse(), res)

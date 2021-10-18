@@ -180,7 +180,7 @@ func TestBadRequestResponse(t *testing.T) {
 		DoFunc: mocks.GetBadRequestResponse,
 	}
 
-	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"Account verification code."}`
+	p := `{ "origin":"SMSGlobal", "destination":"61474900000", "message":"{code} is your SMSGlobal verification code."}`
 	req, err := c.NewRequest(http.MethodPost, "/otp", p)
 
 	err = c.Do(req, new(api.Otp))
