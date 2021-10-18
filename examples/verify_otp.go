@@ -18,7 +18,7 @@ func main() {
 	res, err := client.Otp.VerifyByRequestId("Request Id", "OTP code entered by your user")
 
 	// an otp code can be verified by using either request id or destination number
-	// res, err := client.Otp.VerifyByRequestId("Destination number", "OTP code entered by your user")
+	// res, err := client.Otp.VerifyByDestination("Destination number", "OTP code entered by your user")
 
 	if err != nil {
 		fmt.Printf("Error while verifying the OTP: %s \n", err.Error())
