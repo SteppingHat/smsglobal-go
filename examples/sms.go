@@ -9,10 +9,8 @@ import (
 
 func main() {
 	SendOne()
-	SendMultiple()
-	Get()
-	List()
-	Delete()
+	SmsList()
+	SmsIncomingList()
 }
 
 func Init() *smsglobal.SMSGlobal {
@@ -88,7 +86,7 @@ func SendMultiple() {
 	fmt.Println()
 }
 
-func List() {
+func SmsList() {
 	options := make(map[string]string)
 	options["offset"] = "1"
 	options["limit"] = "5"
@@ -112,10 +110,10 @@ func List() {
 	}
 }
 
-func Get() {
+func SmsGet() {
 	client := Init()
 
-	res, err := client.Sms.Get("outgoing id or id")
+	res, err := client.Sms.Get("Outgoing Id or Id")
 
 	if err != nil {
 		fmt.Printf("Error while fetching the message details: %s", err.Error())
@@ -127,13 +125,63 @@ func Get() {
 
 }
 
-func Delete() {
+func SmsDelete() {
 	client := Init()
 
-	err := client.Sms.Delete("outgoing id or id")
+	err := client.Sms.Delete("Outgoing Id or Id")
 
 	if err != nil {
 		fmt.Printf("Error while deleting the message: %s", err.Error())
+		fmt.Println()
+		os.Exit(0)
+	}
+}
+
+func SmsIncomingList() {
+	options := make(map[string]string)
+	options["offset"] = "1"
+	options["limit"] = "5"
+	client := Init()
+	res, err := client.SmsIncoming.List(options)
+
+	if err != nil {
+		fmt.Printf("Error while fetching the list of incoming mesages: %s \n", err.Error())
+		os.Exit(0)
+	}
+
+	fmt.Printf("Total sms found %d", res.Total)
+	fmt.Println()
+	fmt.Printf("Reponse received: %+v", res.Messages)
+
+	// Loop over structs an
+	for i := range res.Messages {
+
+		fmt.Printf("#%d Id = %v, Message = %v", i, res.Messages[i].Id, res.Messages[i].Message)
+		fmt.Println()
+	}
+}
+
+func SmsIncomingGet() {
+	client := Init()
+
+	res, err := client.SmsIncoming.Get("Id")
+
+	if err != nil {
+		fmt.Printf("Error while fetching the incoming message details: %s \n", err.Error())
+		os.Exit(0)
+	}
+
+	fmt.Printf("Reponse received: %+v", res)
+	fmt.Println()
+}
+
+func SmsIncomingDelete() {
+	client := Init()
+
+	err := client.SmsIncoming.Delete("Id")
+
+	if err != nil {
+		fmt.Printf("Error while deleting the incoming message: %s \n", err.Error())
 		fmt.Println()
 		os.Exit(0)
 	}
