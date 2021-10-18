@@ -13,6 +13,8 @@ import (
 	"net/http"
 	"net/url"
 	p "path"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/smsglobal/smsglobal-go/internal/interface/apiclient"
@@ -94,9 +96,11 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("Accept", constants.ContentType)
 	req.Header.Add("Accept-Charset", "utf-8")
 	req.Header.Add("Authorization", c.generateAuthToken())
-	req.Header.Add("User-Agent", constants.UserAgent)
+
+	req.Header.Add("User-Agent", fmt.Sprintf( "SMSGlobal-GO-SDK/v2 Version/%s Go/%s (%s %s)", constants.Version, strings.Replace(runtime.Version(), "go", "",1) , runtime.GOOS, runtime.GOARCH))
 
 	// TODO clean up before MR
+	log.Debug().Msgf("User-Agent: %v", req.Header.Get("User-Agent"))
 	log.Debug().Msgf("Authorization header: %v", req.Header.Get("Authorization"))
 
 	return req, nil
