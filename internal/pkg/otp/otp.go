@@ -63,7 +63,7 @@ func (c *Client) VerifyByRequestId(id, code string) (*api.Otp, error) {
 func (c *Client) CancelByDestination(msisdn string) (*api.Otp, error) {
 	log := c.Logger.Lgr.With().Str("OTP API Layer", "CancelByDestination").Logger()
 
-	log.Debug().Msg(fmt.Sprintf("Cancelling an otp request using destination number:: %s", msisdn))
+	log.Debug().Msg(fmt.Sprintf("Cancelling an otp request using destination number: %s", msisdn))
 
 	p := generateMsisdnPath(msisdn, "cancel")
 

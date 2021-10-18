@@ -17,7 +17,7 @@ type (
 	}
 
 	Otp struct {
-		RequestId           string `json:"request_id"`
+		RequestId           string `json:"requestId"`
 		Destination         string `json:"destination"`
 		ValidUntilTimestamp string `json:"validUnitlTimestamp"`
 		CreatedTimestamp    string `json:"createdTimestamp"`

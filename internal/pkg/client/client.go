@@ -241,6 +241,10 @@ func checkResponse(l *logger.Logger, r *http.Response) error {
 		for _, err := range errors {
 			errorResponse.Errors = append(errorResponse.Errors, err.(string))
 		}
+	} else if err, ok := errs["error"]; ok {
+		errorResponse.Errors = append(errorResponse.Errors, err.(string))
+	} else {
+		errorResponse.Message = string(data)
 	}
 
 	return errorResponse
