@@ -5,7 +5,7 @@ type Campaign struct {
 }
 
 type SmsIncoming struct {
-	Id          int64    `json:"id"`
+	Id          uint64    `json:"id"`
 	Origin      string   `json:"origin"`
 	Destination string   `json:"destination"`
 	Message     string   `json:"message"`
@@ -18,7 +18,7 @@ type SmsIncoming struct {
 }
 
 type SmsIncomingList struct {
-	Total    uint16        `json:"total,omitempty"`
+	Total    uint32        `json:"total,omitempty"`
 	Offset   uint16        `json:"offset,omitempty"`
 	Limit    uint16        `json:"limit,omitempty"`
 	Messages []SmsIncoming `json:"messages,omitempty"`

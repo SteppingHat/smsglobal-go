@@ -8,7 +8,7 @@ import (
 
 // Sms represents an outgoing sms response
 type Sms struct {
-	Id          int64  `json:"id,omitempty"`
+	Id          uint64  `json:"id,omitempty"`
 	OutgoingId  uint64 `json:"outgoing_id,omitempty"`
 	Origin      string `json:"origin"`
 	Destination string `json:"destination"`
@@ -19,7 +19,7 @@ type Sms struct {
 
 // SmsList struct represents the list of outgoing messages
 type SmsList struct {
-	Total    uint16 `json:"total,omitempty"`
+	Total    uint32 `json:"total,omitempty"`
 	Offset   uint16 `json:"offset,omitempty"`
 	Limit    uint16 `json:"limit,omitempty"`
 	Messages []Sms  `json:"messages,omitempty"`
