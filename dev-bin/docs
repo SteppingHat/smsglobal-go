@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./bin/godoc -http=:6060

@@ -1,26 +1,32 @@
 package smsglobal
 
 import (
-	"github.com/smsglobal/smsglobal-go/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/client"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/otp"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/sms"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/sms-incoming"
+	"github.com/smsglobal/smsglobal-go/internal/pkg/user"
+	"github.com/smsglobal/smsglobal-go/internal/types/api"
+	"github.com/smsglobal/smsglobal-go/internal/types/constants"
 	e "github.com/smsglobal/smsglobal-go/pkg/error"
 	"github.com/smsglobal/smsglobal-go/pkg/logger"
-	"github.com/smsglobal/smsglobal-go/pkg/user"
-	"github.com/smsglobal/smsglobal-go/types/constants"
-)
-
-var (
-	lg = logger.CreateLogger(constants.DebugLevel).Lgr.With().Str("SMSGlobal", "Client").Logger()
 )
 
 // SMSGlobal defines the SMSGlobal client.
 type SMSGlobal struct {
-	User *user.Client
+	User        *user.Client
+	Sms         *sms.Client
+	SmsIncoming *sms_incoming.Client
+	Otp         *otp.Client
 }
 
-// Init initializes the SMSGlobal client with all available resources
+// New Init initializes the SMSGlobal client with all available resources
 func New(key, secret string) (*SMSGlobal, error) {
 
-	lg.Info().Msgf("Creating SMSGlobal instance")
+	// Create the logger
+	l := logger.CreateLogger(constants.DebugLevel)
+	lg := l.Lgr.With().Str("SMSGlobal", "New").Logger()
+	lg.Debug().Msgf("Creating SMSGlobal instance")
 
 	if key == "" || secret == "" {
 		return nil, &e.Error{Message: "API key and Secret are required!", Code: constants.DefaultCode}
@@ -28,6 +34,28 @@ func New(key, secret string) (*SMSGlobal, error) {
 
 	s := new(SMSGlobal)
 
-	s.User = &user.Client{Handler: client.New(key, secret)}
+	c := client.New(key, secret)
+	c.Logger = l
+	s.User = &user.Client{Handler: c, Logger: l}
+	s.Sms = &sms.Client{Handler: c, Logger: l}
+	s.SmsIncoming = &sms_incoming.Client{Handler: c, Logger: l}
+	s.Otp = &otp.Client{Handler: c, Logger: l}
+
 	return s, nil
+}
+
+// CreateSms Creates an empty api.SendSingleSms object. Populate relevant properties for sending a message
+func (s *SMSGlobal) CreateSms() *api.SendSingleSms {
+	return &api.SendSingleSms{}
+}
+
+// CreateMultipleSms Creates an empty api.SendMultipleSms object. Populated relevant properties for sending a message
+func (s *SMSGlobal) CreateMultipleSms() *api.SendMultipleSms {
+	return &api.SendMultipleSms{}
+}
+
+
+// CreateOtp Creates an empty api.SendOtp object. Populate relevant properties for sending a message
+func (s *SMSGlobal) CreateOtp() *api.SendOtp {
+	return &api.SendOtp{}
 }

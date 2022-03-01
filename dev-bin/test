@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+go clean -testcache
+
+echo "Running all unit tests"
+
+go test --coverprofile=coverage.out -count=1 -p 1 -cover ./...
+if [ $? -eq 1 ]; then
+    echo "Failed tests"
+    exit 1
+fi
+
+"${PWD}"/dev-bin/analyse "${PWD}"/coverage.out

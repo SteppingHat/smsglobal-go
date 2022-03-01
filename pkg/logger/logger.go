@@ -1,8 +1,9 @@
 package logger
 
 import (
-	"github.com/rs/zerolog"
 	"os"
+
+	"github.com/rs/zerolog"
 )
 
 // Logger struct to be used as the logger object
@@ -10,7 +11,7 @@ type Logger struct {
 	Lgr zerolog.Logger
 }
 
-/*CreateLogger - create a zerolog logger*/
+// CreateLogger - create a zerolog logger
 func CreateLogger(debugLevel string) *Logger {
 
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
@@ -31,7 +32,7 @@ func (l *Logger) Info(msg string) {
 	l.Lgr.Info().Msg(msg)
 }
 
-// Warn - print out an warning-level message
+// Warn - print out a warning-level message
 func (l *Logger) Warn(msg string) {
 	l.Lgr.Warn().Msg(msg)
 }
