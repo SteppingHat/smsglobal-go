@@ -1,5 +1,11 @@
 # SMSGlobal Go SDK
 
+---
+![Go](https://github.com/smsglobal/smsglobal-go/workflows/Go/badge.svg?branch=master)
+[![Sourcegraph](https://sourcegraph.com/github.com/smsglobal/smsglobal-go/-/badge.svg)](https://sourcegraph.com/github.com/smsglobal/smsglobal-go?badge)
+![Go](https://github.com/smsglobal/smsglobal-go/workflows/Go/badge.svg?branch=master&event=status)
+---
+
 The official [SMSGlobal](https://www.smsglobal.com?utm_source=dev&utm_medium=github&utm_campaign=go_sdk) Go client library.
 
 Sign up for a [free SMSGlobal account](https://www.smsglobal.com/mxt-sign-up/?utm_source=dev&utm_medium=github&utm_campaign=go_sdk) today and get your API Key from our advanced SMS platform, MXT. Plus, enjoy unlimited free developer sandbox testing to try out your API in full!
