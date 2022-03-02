@@ -3,7 +3,7 @@
 ---
 ![Go](https://github.com/smsglobal/smsglobal-go/workflows/Go/badge.svg?branch=main)
 [![Sourcegraph](https://sourcegraph.com/github.com/smsglobal/smsglobal-go/-/badge.svg)](https://sourcegraph.com/github.com/smsglobal/smsglobal-go?badge)
-![Go](https://github.com/smsglobal/smsglobal-go/workflows/Go/badge.svg?branch=main&event=status)
+![Go](https://github.com/smsglobal/smsglobal-go/workflows/Go/badge.svg?branch=main&event=push)
 ---
 
 The official [SMSGlobal](https://www.smsglobal.com?utm_source=dev&utm_medium=github&utm_campaign=go_sdk) Go client library.
