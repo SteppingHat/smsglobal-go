@@ -1,4 +1,4 @@
-package main
+package otp_send
 
 import (
 	"fmt"
