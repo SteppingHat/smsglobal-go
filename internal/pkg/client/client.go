@@ -59,19 +59,11 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	log := c.Logger.Lgr.With().Str("REST CLIENT", "NewRequest").Logger()
 	log.Debug().Msg("Creating new http request instance")
 
-	rel, err := url.Parse(path)
-
+	// append path to existing path "/v2"
+	u, err := url.Parse(c.BaseURL.String()+path)
 	if err != nil {
 		return nil, err
 	}
-
-	// append path to existing path "/v2"
-	c.BaseURL.Path = p.Join(c.BaseURL.Path, rel.Path)
-
-	// forward query string
-	c.BaseURL.RawQuery = rel.RawQuery
-	u := c.BaseURL.ResolveReference(c.BaseURL)
-	c.method = method
 
 	// TODO remove request body logging before releasing
 	jsonBody, _ := json.Marshal(body)
@@ -95,7 +87,7 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("Content-Type", constants.ContentType)
 	req.Header.Add("Accept", constants.ContentType)
 	req.Header.Add("Accept-Charset", "utf-8")
-	req.Header.Add("Authorization", c.generateAuthToken())
+	req.Header.Add("Authorization", c.generateAuthToken(u, method))
 
 	req.Header.Add("User-Agent", fmt.Sprintf( "SMSGlobal-GO-SDK/v2 Version/%s Go/%s (%s %s)", constants.Version, strings.Replace(runtime.Version(), "go", "",1) , runtime.GOOS, runtime.GOARCH))
 
@@ -107,25 +99,25 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 }
 
 // generateAuthToken Generate authorization token string for each request
-func (c *Client) generateAuthToken() string {
+func (c *Client) generateAuthToken(url *url.URL, method string) string {
 
 	log := c.Logger.Lgr.With().Str("REST CLIENT", "generateAuthToken").Logger()
 	rand.Seed(time.Now().UnixNano())
 	timestamp := int(time.Now().Unix())
 	nonce := rand.Intn(1000000000)
 
-	resource := c.BaseURL.Path
+	resource := url.Path
 
 	// append query params
-	if len(c.BaseURL.RawQuery) > 0 {
-		resource = resource + "?" + c.BaseURL.RawQuery
+	if len(url.RawQuery) > 0 {
+		resource = resource + "?" + url.RawQuery
 	}
 
 	// TODO clean up before MR
 	log.Debug().Msgf("API endpoint %+v", resource)
 
 	// raw string for HMAC generation
-	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, c.method, resource, c.BaseURL.Host, 443)
+	auth := fmt.Sprintf("%d\n%d\n%s\n%s\n%s\n%d\n\n", timestamp, nonce, method, resource, url.Host, 443)
 
 	// TODO clean up before MR
 	log.Debug().Msgf("Raw auth string: %v", auth)
@@ -146,7 +138,7 @@ func (c *Client) generateAuthToken() string {
 func (c *Client) Do(req *http.Request, v interface{}) error {
 
 	log := c.Logger.Lgr.With().Str("REST CLIENT", "Do").Logger()
-	log.Debug().Msgf("Sending %s request to %s", c.method, c.BaseURL)
+	log.Debug().Msgf("Sending %s request to %s", req.Method, req.URL)
 
 	res, err := c.HttpClient.Do(req)
 
