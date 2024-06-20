@@ -45,7 +45,7 @@ func TestNew(t *testing.T) {
 
 func TestGenerateAuthToken(t *testing.T) {
 	c := setup()
-	token := c.generateAuthToken()
+	token := c.generateAuthToken(c.BaseURL, c.method)
 	assert.NotNil(t, token)
 
 	// assert for string format matching `MAC id="%s", ts="%d", nonce="%d", mac="%s"`
@@ -64,7 +64,7 @@ func TestNewRequest(t *testing.T) {
 	req, err := c.NewRequest(http.MethodGet, "/sms", nil)
 
 	assert.NoError(t, err)
-	assert.Equal(t, http.MethodGet, c.method)
+	assert.Equal(t, http.MethodGet, req.Method)
 	assert.Equal(t, constants.ContentType, req.Header.Get("Accept"))
 	assert.Equal(t, constants.ContentType, req.Header.Get("Content-Type"))
 	assert.Equal(t, "utf-8", req.Header.Get("Accept-Charset"))
@@ -85,8 +85,8 @@ func TestDo(t *testing.T) {
 	req, err := c.NewRequest(http.MethodPost, "/sms", p)
 
 	assert.NoError(t, err)
-	assert.Equal(t, c.method, http.MethodPost)
 	assert.NotNil(t, req)
+	assert.Equal(t, http.MethodPost, req.Method)
 
 	sms := &api.SmsResponse{}
 	err = c.Do(req, sms)
@@ -108,8 +108,8 @@ func TestDoWithGarbageResponse(t *testing.T) {
 	req, err := c.NewRequest(http.MethodPost, "/sms", p)
 
 	assert.NoError(t, err)
-	assert.Equal(t, c.method, http.MethodPost)
 	assert.NotNil(t, req)
+	assert.Equal(t, http.MethodPost, req.Method)
 
 	balance := &api.BalanceResponse{}
 
@@ -146,8 +146,8 @@ func TestDoNoContentResponse(t *testing.T) {
 	req, err := c.NewRequest(http.MethodDelete, "/sms/6746514019161950", nil)
 
 	assert.NoError(t, err)
-	assert.Equal(t, c.method, http.MethodDelete)
 	assert.NotNil(t, req)
+	assert.Equal(t, http.MethodDelete, req.Method)
 
 	err = c.Do(req, nil)
 	assert.NoError(t, err)
