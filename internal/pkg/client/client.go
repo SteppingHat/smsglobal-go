@@ -12,7 +12,6 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	p "path"
 	"runtime"
 	"strings"
 	"time"
